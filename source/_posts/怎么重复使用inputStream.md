@@ -1,4 +1,9 @@
+title:怎么重复使用inputStream
+
+
+
 ### 引语：
+
 &nbsp;&nbsp;&nbsp;&nbsp;之前做项目的时候遇到一个问题,就是从网络中读取的图片要上传到oss,而且要对图片进行裁剪和压缩,其中上传和裁剪都要使用到图片的inputStream,
 又因为inputstream不能重复读,导致裁剪是成功的,而上传是失败的.我们今天就提供两种方法来解决,inputStream不能重复读的问题.
 
