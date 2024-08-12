@@ -1,0 +1,692 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="wxwwt">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="声音克隆 前言：最近因为一直在给肚子里面的宝宝做故事胎教，每天（其实是看自己心情抽空讲下故事）都要给宝宝讲故事，心想反正宝宝也看不见我，只听我的声音，干脆偷个懒，克隆自己的声音，然后把故事输入进去。然后老婆想给宝宝做胎教的时候就可以输入一个故事，即使我还没下班也可以给宝宝讲故事，岂不美哉！果然，偷懒是人类进步的阶梯，说干就干。我找了一圈相应的软件，发现GPT-sovits非常符合我的需求，又是开源">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2024/06/29/%E5%BF%8D%E6%B3%95%EF%BC%9A%E5%A3%B0%E9%9F%B3%E5%85%8B%E9%9A%86%E4%B9%8B%E6%9C%AF-GPT-sovits/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="声音克隆 前言：最近因为一直在给肚子里面的宝宝做故事胎教，每天（其实是看自己心情抽空讲下故事）都要给宝宝讲故事，心想反正宝宝也看不见我，只听我的声音，干脆偷个懒，克隆自己的声音，然后把故事输入进去。然后老婆想给宝宝做胎教的时候就可以输入一个故事，即使我还没下班也可以给宝宝讲故事，岂不美哉！果然，偷懒是人类进步的阶梯，说干就干。我找了一圈相应的软件，发现GPT-sovits非常符合我的需求，又是开源">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630145807703.png">
+<meta property="og:image" content="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630152657725.png">
+<meta property="og:image" content="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630153511899.png">
+<meta property="og:image" content="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630154228894.png">
+<meta property="og:image" content="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630154547313.png">
+<meta property="og:image" content="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630155650498.png">
+<meta property="og:image" content="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630160005789.png">
+<meta property="og:image" content="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630155920374.png">
+<meta property="og:image" content="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630160719288.png">
+<meta property="og:image" content="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630161743646.png">
+<meta property="og:image" content="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630170117469.png">
+<meta property="og:image" content="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630171959213.png">
+<meta property="article:published_time" content="2024-06-29T13:21:01.638Z">
+<meta property="article:modified_time" content="2024-08-04T09:42:18.849Z">
+<meta property="article:author" content="wxwwt">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630145807703.png">
+  
+  
+  
+  <title>Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text=""></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-06-29 21:21" pubdate>
+          2024年6月29日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          16 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header"></h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>声音克隆</p>
+<h1 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h1><p>最近因为一直在给肚子里面的宝宝做故事胎教，每天（其实是看自己心情抽空讲下故事）都要给宝宝讲故事，心想反正宝宝也看不见我，只听我的声音，干脆偷个懒，克隆自己的声音，然后把故事输入进去。然后老婆想给宝宝做胎教的时候就可以输入一个故事，即使我还没下班也可以给宝宝讲故事，岂不美哉！果然，偷懒是人类进步的阶梯，说干就干。我找了一圈相应的软件，发现GPT-sovits非常符合我的需求，又是开源的，又不需要很长时间的音频素材，简直完美，所以就有了下面的GPT-vosits使用教程。其实网上已经有很多这样的教程了，大家都可以搜一搜，我也只是记录一下自己的使用过程，顺便水（记录）一篇博客，好久没写了，感觉还是的写一写，要不然真的是浪费了自己空闲时间。</p>
+<h1 id="使用："><a href="#使用：" class="headerlink" title="使用："></a>使用：</h1><h2 id="前置条件："><a href="#前置条件：" class="headerlink" title="前置条件："></a>前置条件：</h2><h3 id="测试通过的环境"><a href="#测试通过的环境" class="headerlink" title="测试通过的环境"></a>测试通过的环境</h3><p>下面这个摘自官网，需要用python环境，最好是有一张好的显卡，没有的话cpu其实也可以跑，就是慢嘛。</p>
+<ul>
+<li>Python 3.9，PyTorch 2.0.1，CUDA 11</li>
+<li>Python 3.10.13，PyTorch 2.1.2，CUDA 12.3</li>
+<li>Python 3.9，Pytorch 2.2.2，macOS 14.4.1（Apple 芯片）</li>
+<li>Python 3.9，PyTorch 2.2.2，CPU 设备</li>
+</ul>
+<p><em>注: numba&#x3D;&#x3D;0.56.4 需要 python&lt;3.11</em></p>
+<p>因为我这个纯粹是给自己使用，也就没有折腾在云上，或者服务器上的使用操作了。只有windows电脑的使用步骤，如果各位读者是会点编程，有技术背景的话，可以看下最底部的参考资料，里面有官网的语雀文档，里面有介绍怎么在云上使用，linux，macOS使用等情况。</p>
+<p>1.从官网下载</p>
+<p>官网上提供了两个整合包，<a target="_blank" rel="noopener" href="https://huggingface.co/lj1995/GPT-SoVITS-windows-package/resolve/main/GPT-SoVITS-beta-fast-inference-branch.7z?download=true">0206fix3 整合包</a>或<a target="_blank" rel="noopener" href="https://huggingface.co/lj1995/GPT-SoVITS-windows-package/resolve/main/GPT-SoVITS-beta0217fix2.7z?download=true">0217fix2 整合包</a>，但是都是huggingface（国外的）下载会很慢。</p>
+<p>还有一个方式就是去B站关注下up主：花儿不哭，自动回复消息里面会有连接。这里我提供了花儿不哭大佬给的网盘地址，<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1OE5qL0KreO-ASHwm6Zl9gA?pwd=mqpi">下载地址</a>，不过还是建议各位去关注一下一键三连，为大佬的开源精神支持一下。</p>
+<p>2.下载完之后，解压7z格式的文件</p>
+<p>3.双击go-webui.bat</p>
+<p><img src="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630145807703.png" srcset="/img/loading.gif" lazyload alt="image-20240630145807703"></p>
+<p>4.语音处理</p>
+<p>如果你的音频素材，很干净，比如说就是你手机录的你自己的声音，那可以跳过这一步。</p>
+<p>如果你的素材是从网上下载过来的，里面有背景声音，杂音等，那就需要走这一步，这样分离出来的声音效果更好，后续输出声音才会更加准确。</p>
+<p>4.1</p>
+<p>我这里是从网上下载的一个海绵宝宝的声音素材，里面有背景音，所以我需要先处理下音频文件，勾选是否开启UVR5-WebUI的勾选框，会弹出来一个新的界面。</p>
+<p><img src="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630152657725.png" srcset="/img/loading.gif" lazyload alt="image-20240630152657725"></p>
+<p>4.2 </p>
+<p>参考下面的图，把音频文件放到某个目录，举例，我这里把海绵宝宝的声音放到E:\video\haimianbaobao里面，</p>
+<p>然后在下面的第一个红框里面填入文件系统的地址。红框下面那个是可以直接拖入文件的，也可以用下面那个。</p>
+<p>接着，填写输出__主人声的文件夹__，比如我的音频文件里面不是有海绵宝宝的声音和背景音吗，海绵宝宝的声音就是主人声，其他的声音都是用不到的，就填写在__非主人声文件夹__里面。这里我特意区分了一下，写了一个vocal（主人声）和others（非主人声）的路径，这个路径不存在也没关系，点击转换之后软件会自动创建文件夹。</p>
+<p><img src="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630153511899.png" srcset="/img/loading.gif" lazyload alt="image-20240630153511899"></p>
+<p>5.语音切分</p>
+<p>因为这个语音很长的话，训练效果会很差，所以需要将长的语音切短。不过我们这里用的声音其实挺短的，只有10秒，所以只切出来一个文件，如果是比较完整的素材效果会更加好，官网是这么说的如果你的显卡有24G显存，那么高于24秒的音频就要去掉，可以参考一下，看看自己的电脑配置去掉过长的音频。将上一步处理完的音频文件&#x2F;文件夹地址粘贴过来放到第一个红框里面，然后第二个红框加上&#x2F;haimianbaobao方便和其他音频文件区分开。</p>
+<p><img src="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630154228894.png" srcset="/img/loading.gif" lazyload alt="image-20240630154228894"></p>
+<p>6.语音降噪</p>
+<p>官网说这个功能不太好用，慎用，所以我们就不用这个功能了，直接跳过</p>
+<p><img src="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630154547313.png" srcset="/img/loading.gif" lazyload alt="image-20240630154547313"></p>
+<p>7.语音打标</p>
+<p>输入上一步得到的文件夹地址，然后填入输出文件夹路径，我们依然是加一个haimianbaobao的文件夹</p>
+<p><img src="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630155650498.png" srcset="/img/loading.gif" lazyload alt="image-20240630155650498"></p>
+<p>8.校对标注</p>
+<p>一般这个标注都是准的，可能有些多音字，或者词语可能会标错之类的，填写好标注文件的地址，开启标注WebUI进行修改调整。我们这里就一句话，也没啥好调的直接跳过了</p>
+<p><img src="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630160005789.png" srcset="/img/loading.gif" lazyload alt="image-20240630160005789"></p>
+<p><img src="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630155920374.png" srcset="/img/loading.gif" lazyload alt="image-20240630155920374"></p>
+<p>9.训练模型</p>
+<p>切换到第二个TTS的界面，填入标注文件地址，切分文件目录，在点击一键三连即可。</p>
+<p><img src="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630160719288.png" srcset="/img/loading.gif" lazyload alt="image-20240630160719288"></p>
+<p>10.微调训练</p>
+<p>微调训练反正根据自己的显卡来，我这里是一张8G的4060，batch_size都选的2，两个训练，SoVITS，GPT依次训练过来。训练轮次在显卡显存不太大的时候也调小一点。</p>
+<p><img src="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630161743646.png" srcset="/img/loading.gif" lazyload alt="image-20240630161743646"></p>
+<p>11.推理</p>
+<p>以上的步骤都弄完了，恭喜你，已经可以愉快的玩耍了。</p>
+<p>点到推理的栏目，选择自己之前训练的模型，你可能会看到haimianbaobao的模型有好几个，还有类似e10这样的后缀，表示它的训练轮次，你可以几个模型都试一下哪个效果最好，就用哪个。<img src="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630170117469.png" srcset="/img/loading.gif" lazyload alt="image-20240630170117469"></p>
+<p>如果没有看到你训练的模型，点击刷新模型路径试试。</p>
+<p>之后再勾选开启TTS推理WebUI，跳转到一个新的界面，然后在输入一段3-10秒参考音频，我们就从切分好的音频文件夹&#x2F;slicer_opt&#x2F;haimianbaobao里面选一个长度符合的即可。</p>
+<p><img src="https://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/imgRepo/image-20240630171959213.png" srcset="/img/loading.gif" lazyload alt="image-20240630171959213"></p>
+<p>接着在输入你想要朗读的文本，点击推理，就会生成一个音频文件，就可以听到你训练的声音读的文本啦~</p>
+<p>如果你的文本很长，下面还会有一个辅助长文本切分的工具，可以按照好几种方式切分，然后把在切分好的文本放入到要合成的文本里面。</p>
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>训练了自己的声音，以为可以偷懒用软件替代自己给宝宝讲故事了，结果老婆嫌弃软件没有我讲的声情并茂，也没用几次，还是要我自己讲故事。呜呼，白搞。整体从训练过程来看还是比较麻烦的，对于有技术背景的人可能还好，对于小白来说还是比较复杂的，参考资料里面有个UP主对GPT-SoVITs的流程进行了简化，有兴趣的也可以看看。</p>
+<h1 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h1><p><a target="_blank" rel="noopener" href="https://www.descript.com/blog/article/best-ai-voice-cloning-tools">1.最好的AI声音克隆工具</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV12g4y1m7Uw/?vd_source=789e3d87ea4eb7ba245bd791f41f8e1f">2.花儿不哭B站视频</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1P541117yn/?spm_id_from=333.337.search-card.all.click&;vd_source=4d7819b82193f7361a8b1753733c9e13&vd_source=789e3d87ea4eb7ba245bd791f41f8e1f">3.B站视频教程</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.yuque.com/baicaigongchang1145haoyuangong/ib3g1e">4.GPT-SoVITS官网语雀文档</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1WC411W79t/?spm_id_from=333.788&vd_source=789e3d87ea4eb7ba245bd791f41f8e1f">5.基于GPT-SoVITS修改的更加简洁的一键脚本</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div></div>
+      <div>http://example.com/2024/06/29/忍法：声音克隆之术-GPT-sovits/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>wxwwt</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年6月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/08/12/%E6%80%8E%E4%B9%88%E9%87%8D%E5%A4%8D%E4%BD%BF%E7%94%A8inputStream/" title="">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/05/05/%E5%9F%BA%E4%BA%8ELangChain%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AAagent/" title="">
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

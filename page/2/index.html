@@ -21,7 +21,7 @@
   
     <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/index.html">
+<meta property="og:url" content="http://example.com/page/2/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="wxwwt">
@@ -227,81 +227,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/08/12/postgresql%E6%B8%85%E7%90%86%E8%A1%A8%E7%A9%BA%E9%97%B4/" target="_self">
+        <a href="/2024/08/12/java%E5%9B%9B%E7%A7%8D%E5%BC%95%E7%94%A8%E7%AE%80%E4%BB%8B/" target="_self">
           
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/08/12/postgresql%E6%B8%85%E7%90%86%E8%A1%A8%E7%A9%BA%E9%97%B4/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/08/12/java%E5%9B%9B%E7%A7%8D%E5%BC%95%E7%94%A8%E7%AE%80%E4%BB%8B/" target="_self">
         <div>
-          前言最近在用postgresql查询数据的时候，发现有个表的查询一直很慢，这里暂且取名A表，但是数据量并没有特别大，才几万的数据量，而且发现跟这个表同schema的数据表有个几千万的，但是查询都比这个A表快很多。后来查找了一系列资料发现，是A表占用的空间太大，会影响查询的性能，使用命令查看发现大概有4G左右的磁盘查勇，而几千万的那个表占用空间才几百M，于是使用命令清理了A表的磁盘占用，处理完之后就
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-08-12 08:28" pubdate>
-              2024-08-12
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/08/12/JavaShutDownHook%E4%BB%8B%E7%BB%8D%E5%92%8C%E4%BD%BF%E7%94%A8/" target="_self">
-          
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/08/12/JavaShutDownHook%E4%BB%8B%E7%BB%8D%E5%92%8C%E4%BD%BF%E7%94%A8/" target="_self">
-        <div>
-          概述：之前有了解过Java的ShutDown Hook机制，但是因为没有使用场景也没有深入学习，最近刚好又看到ShutDown Hook的一些东西，想着学习总结一下，做下学习记录。Java的Shutdown Hook是一种机制，允许开发者在Java虚拟机（JVM）即将关闭之前执行一些清理或终止操作。Shutdown Hook提供了一个钩子，允许开发者在JVM关闭时捕获到关闭事件并执行相应的逻辑。以
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-08-12 08:28" pubdate>
-              2024-08-12
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/08/12/hadoop%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98%E4%BD%BF%E7%94%A8/" target="_self">
-          
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/08/12/hadoop%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98%E4%BD%BF%E7%94%A8/" target="_self">
-        <div>
-          hadoop分布式缓存的使用介绍DistributedCache是hadoop框架提供的一种机制,可以将job指定的文件,在job执行前,先行分发到task执行的机器上,并有相关机制对cache文件进行管理。缓存内容是在文件中的，各个节点可以根据hdfs中访问路径来读取缓存。 使用步骤1.添加分布式缓存的时候，先定义缓存的路径 1String cacheFile = &quot;hdfs://xx
+          引语：&nbsp;&nbsp;&nbsp;&nbsp;我们知道java相比C，C++中没有令人头痛的指针，但是却有和指针作用相似的引用对象（Reference），就是常说的引用，比如，Object obj &#x3D; new Object()；这个obj就是引用，它指向的是真正的对象Object的地址，不过今天要说的是java中的四种引用。有人可能比较懵逼，四种引用？是的，从JDK1.2之后，j
         </div>
       </a>
 
@@ -326,15 +260,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/08/12/hadoop%E5%AE%9E%E7%8E%B0%E7%9F%A9%E9%98%B5%E7%9B%B8%E4%B9%98/" target="_self">
+        <a href="/2024/08/12/java%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_self">
           
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/08/12/hadoop%E5%AE%9E%E7%8E%B0%E7%9F%A9%E9%98%B5%E7%9B%B8%E4%B9%98/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/08/12/java%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_self">
         <div>
-          hadoop 实现矩阵相乘我们大学里学过矩阵相乘，如下，当两个矩阵A，B，A的行等于B的列时可以相乘。然后乘积是A的行乘以B的列得出。我们今天用hadoop来实现一下矩阵的乘法。$$    \left[  \begin{matrix}   A1 &amp;  A2 &amp;  A3 \    A4 &amp;  A5 &amp;  A6 \    A7 &amp;  A8 &amp;  A9
+          引语:&nbsp;&nbsp;&nbsp;&nbsp;平时我们在运行程序的时候,创建的对象都在内存中,当程序停止或者中断了,对象也就不复存在了.如果我们能将对象保存起来,在需要使用它的时候在拿出来使用就好了,并且对象的信息要和我们保存时的信息一致.序列化就可以解决了这样的问题.序列化当然不止一种方式,如下:    序列类型 是否跨语言 优缺点    hession 支持 跨语言,序列化后体积小,速
         </div>
       </a>
 
@@ -359,15 +293,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/08/12/hadoop%E5%8D%95%E6%9C%BA%E5%AE%89%E8%A3%85%E8%AE%B0%E5%BD%95/" target="_self">
+        <a href="/2024/08/12/java%E7%9A%84%E6%B7%B1%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B5%85%E6%8B%B7%E8%B4%9D/" target="_self">
           
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/08/12/hadoop%E5%8D%95%E6%9C%BA%E5%AE%89%E8%A3%85%E8%AE%B0%E5%BD%95/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/08/12/java%E7%9A%84%E6%B7%B1%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B5%85%E6%8B%B7%E8%B4%9D/" target="_self">
         <div>
-          引语:&nbsp;&nbsp;&nbsp;&nbsp;最近想接触一些大数据相关的技术,所以有了这篇文章,其实就是记录一下自己学习hadoop的过程,如果文章中有啥写的不对的地方,还望指正(有java开发经验,但是是大数据小白一只,各位大神轻喷.)我先是在网上搜索了一波大数据应该要学些什么技术,基本上不约而同的都是指向了hadoop.&nbsp;&nbsp;&nbsp;&nbsp;摘自维基百科:Ap
+          java的深拷贝和浅拷贝我们知道拷贝就是生成一个新对象和原对象一模一样，但是拷贝也是分方式和程度的，我们来看一下什么是浅拷贝什么是深拷贝 浅拷贝在Java中，java.lang.Object类的clone()方法用于克隆（浅拷贝，属性的指向是相同的）。该方法创建一个对象的副本，并通过逐字段分配在其上对其进行调用并返回该对象的引用。要实现浅拷贝需要实现Cloneable接口，该接口里面没有任何方法，
         </div>
       </a>
 
@@ -392,15 +326,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/08/12/hive%E7%9A%84%E5%AE%89%E8%A3%85%E5%92%8C%E9%85%8D%E7%BD%AE/" target="_self">
+        <a href="/2024/08/12/tomcat%E4%B8%ADpost%E8%AF%B7%E6%B1%82%E9%99%90%E5%88%B6%E9%95%BF%E5%BA%A6/" target="_self">
           
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/08/12/hive%E7%9A%84%E5%AE%89%E8%A3%85%E5%92%8C%E9%85%8D%E7%BD%AE/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/08/12/tomcat%E4%B8%ADpost%E8%AF%B7%E6%B1%82%E9%99%90%E5%88%B6%E9%95%BF%E5%BA%A6/" target="_self">
         <div>
-          hive的安装和配置安装1.先从官网下载hive的压缩包 下载地址这里我下载的是hive-3.1.2 2.配置hive，进入到hive的conf目录下，将默认的配置文件复制一份 123cd hive/conf/cp hive-default.xml.template hive-site.xmlvim hive-site.xml 配置如下： 12345678910111213141516171819
+          问题分析和解决:有天测试的时候有一个接口,是同一份代码在预发环境上跑的很正常,但是在测试环境传入了两个参数(参数数据很长)后就返回了500错误.试了好几次发现传一个参数时正常,两个参数就报错,感觉很懵逼.(这里我还以为是代码问题,没有往环境问题上想),抓包后发现一个参数的时候发送信息是1024之内,2个参数就超过了1024就报错了.我想难道是服务器限制了请求长度,然后去看了下测试服务器的配置,发下
         </div>
       </a>
 
@@ -425,15 +359,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/08/12/remove%E9%9B%86%E5%90%88%E7%B1%BB/" target="_self">
+        <a href="/2024/08/12/%E6%99%AE%E9%80%9A%E5%AF%B9%E8%B1%A1%E4%BD%BF%E7%94%A8spring%E5%AE%B9%E5%99%A8%E4%B8%AD%E7%9A%84%E5%AF%B9%E8%B1%A1/" target="_self">
           
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/08/12/remove%E9%9B%86%E5%90%88%E7%B1%BB/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/08/12/%E6%99%AE%E9%80%9A%E5%AF%B9%E8%B1%A1%E4%BD%BF%E7%94%A8spring%E5%AE%B9%E5%99%A8%E4%B8%AD%E7%9A%84%E5%AF%B9%E8%B1%A1/" target="_self">
         <div>
-          遍历集合类的时候删除元素导语：最近写了一个bug就是在遍历list的时候删除了里面一个元素，其实之前看过阿里的java开发规范，知道在遍历的时候删除元素会产生问题，但是写的快的时候还是会没注意到，那正好研究下里面的机制看。我们看看阿里规范怎么写的： 首先提出一个概念：fail-fast摘自百度百科：fail-fast 机制是java集合(Collection)中的一种错误机制。当多个线程对同一个集
+          引语：&nbsp;&nbsp;&nbsp;&nbsp;工作中有时候需要在普通的对象中去调用spring管理的对象，但是在普通的java对象直接使用@Autowired或者@Resource的时候会发现被注入的对象是null，会报空指针。我们可以简单的理解为spring是一个公司，它管理的对象就是它的员工，而普通的java对象是其他公司的员工，如果其他公司要找spring公司的员工一起共事没有经过s
         </div>
       </a>
 
@@ -458,15 +392,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/08/12/%E5%90%AC%E8%BF%87%E4%BA%86API%E5%92%B1%E4%BB%AC%E6%9D%A5%E7%9C%8B%E7%9C%8BSPI%E6%98%AF%E4%BB%80%E4%B9%88/" target="_self">
+        <a href="/2024/08/12/%E6%80%8E%E4%B9%88%E9%87%8D%E5%A4%8D%E4%BD%BF%E7%94%A8inputStream/" target="_self">
           
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/08/12/%E5%90%AC%E8%BF%87%E4%BA%86API%E5%92%B1%E4%BB%AC%E6%9D%A5%E7%9C%8B%E7%9C%8BSPI%E6%98%AF%E4%BB%80%E4%B9%88/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/08/12/%E6%80%8E%E4%B9%88%E9%87%8D%E5%A4%8D%E4%BD%BF%E7%94%A8inputStream/" target="_self">
         <div>
-          引语 平时API倒是听得很多?SPI又是啥.别急我们来先看看面向接口编程的调用关系，来了解一下，API和SPI的相似和不同之处。 SPI理解先来一段官话的介绍:SPI 全称为 (Service Provider Interface) ，是JDK内置的一种服务提供发现机制.(听了一脸懵逼)好的，我们结合图片来理解一下。&nbsp;&nbsp;&nbsp;&nbsp;简单的来说分为调用方，接口，服务方
+          引语：&nbsp;&nbsp;&nbsp;&nbsp;之前做项目的时候遇到一个问题,就是从网络中读取的图片要上传到oss,而且要对图片进行裁剪和压缩,其中上传和裁剪都要使用到图片的inputStream,又因为inputstream不能重复读,导致裁剪是成功的,而上传是失败的.我们今天就提供两种方法来解决,inputStream不能重复读的问题. 问题分析:inputStream的内部有个pos指
         </div>
       </a>
 
@@ -491,15 +425,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/08/12/Arrays.asList%E5%AD%98%E5%9C%A8%E7%9A%84%E5%9D%91/" target="_self">
+        <a href="/2024/06/29/%E5%BF%8D%E6%B3%95%EF%BC%9A%E5%A3%B0%E9%9F%B3%E5%85%8B%E9%9A%86%E4%B9%8B%E6%9C%AF-GPT-sovits/" target="_self">
           
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/08/12/Arrays.asList%E5%AD%98%E5%9C%A8%E7%9A%84%E5%9D%91/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/06/29/%E5%BF%8D%E6%B3%95%EF%BC%9A%E5%A3%B0%E9%9F%B3%E5%85%8B%E9%9A%86%E4%B9%8B%E6%9C%AF-GPT-sovits/" target="_self">
         <div>
-          引语:阿里巴巴java开发规范说到使用工具类Arrays.asList()方法把数组转换成集合时,不能使用其修改集合相关的方法,它的add&#x2F;remove&#x2F;clear方法会抛出UnsupportedOperationException(),我们来看一下为什么会出现这种情况. 问题分析:我们做个测试 123456public static void main(String[] ar
+          声音克隆 前言：最近因为一直在给肚子里面的宝宝做故事胎教，每天（其实是看自己心情抽空讲下故事）都要给宝宝讲故事，心想反正宝宝也看不见我，只听我的声音，干脆偷个懒，克隆自己的声音，然后把故事输入进去。然后老婆想给宝宝做胎教的时候就可以输入一个故事，即使我还没下班也可以给宝宝讲故事，岂不美哉！果然，偷懒是人类进步的阶梯，说干就干。我找了一圈相应的软件，发现GPT-sovits非常符合我的需求，又是开源
         </div>
       </a>
 
@@ -507,8 +441,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2024-08-12 08:26" pubdate>
-              2024-08-12
+            <time datetime="2024-06-29 21:21" pubdate>
+              2024-06-29
             </time>
           </div>
         
@@ -524,15 +458,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/08/12/ThreadLocal%E7%9A%84%E4%BD%BF%E7%94%A8%E5%92%8C%E5%9D%91%E7%82%B9/" target="_self">
+        <a href="/2024/05/05/%E5%9F%BA%E4%BA%8ELangChain%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AAagent/" target="_self">
           
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/08/12/ThreadLocal%E7%9A%84%E4%BD%BF%E7%94%A8%E5%92%8C%E5%9D%91%E7%82%B9/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/05/05/%E5%9F%BA%E4%BA%8ELangChain%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AAagent/" target="_self">
         <div>
-          ThreadLocal的使用和坑点概念：ThreadLocal的概念：摘自ThreaLocal的注释 123456This class provides thread-local variables.  These variables differ from * their normal counterparts in that each thread that accesses one (via
+          基于LangChain搭建一个agent 1.简单介绍下LangChain 模块划分 2.介绍下agent 3.举例说明没有agent之前，大模型无法获得最新的信息 4.在写怎么构建一个agent的过程 5.最后展示有了agent之后，大模型的新的效果
         </div>
       </a>
 
@@ -540,8 +474,74 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2024-08-12 08:26" pubdate>
-              2024-08-12
+            <time datetime="2024-05-05 22:43" pubdate>
+              2024-05-05
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2024/03/23/LangChain-Chatchat%E7%9F%A5%E8%AF%86%E5%BA%93%E4%BD%BF%E7%94%A8/" target="_self">
+          
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/23/LangChain-Chatchat%E7%9F%A5%E8%AF%86%E5%BA%93%E4%BD%BF%E7%94%A8/" target="_self">
+        <div>
+          LangChain-Chatchat知识库使用 前言上次我们完成了Chatchat的本地部署，使用了LLM对话的功能。这次我们尝试一下其他的功能，之前总是有报错没有跑通，这次处理了几个问题之后才跑通了知识库对话和文件对话。 知识库对话原理: 首先我们看这个图可以明白，知识库对话是有很多步骤的，1-7步是把上传的文件做处理，拆分，转为向量储存起来。然后当我们发起查询请求，也会被转换为向量，接着和向量
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-03-23 20:27" pubdate>
+              2024-03-23
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2024/03/03/Langchain-Chatchat%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/" target="_self">
+          
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/03/Langchain-Chatchat%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/" target="_self">
+        <div>
+          Langchain-Chatchat安装使用 1.前言：最近AI爆发式的火，忆往昔尤记得16,17那会移动互联网是特别火热的，也造富了一批公司和个人，出来了很多精妙的app应用。现在轮到AI发力了，想想自己也应该参与到这场时代的浪潮之中，所以就找了开源的项目来玩一玩，学习下里面的知识。不管最后结果有没有造富自己，学到的知识总是有用的，至少不会让自己在AI时代掉队。 今天要讲的是LangChain-
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-03-03 21:29" pubdate>
+              2024-03-03
             </time>
           </div>
         
@@ -555,7 +555,7 @@
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><a class="extend next" rel="next" href="/page/2/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/#board">3</a><a class="extend next" rel="next" href="/page/3/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 
