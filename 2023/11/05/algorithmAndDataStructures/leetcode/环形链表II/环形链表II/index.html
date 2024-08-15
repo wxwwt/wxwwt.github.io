@@ -1,0 +1,180 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>环形链表II | wxwwt's site</title><meta name="author" content="我想问问天"><meta name="copyright" content="我想问问天"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="环形链表II这是leetcode的142题，朋友说这是链表中比较经典的快慢指针题目，就去做了一下，不过没用快慢指针做出来。用的hash写的，毕竟hash写法比较容易。但是快慢指针的方式很巧妙，就像用两个已知速度的运动员去测量一个跑道是否是环形的。用现实的例子听起来很蠢。。。不过方法是听聪明的，待我慢慢说来。呆！先看题 题目：给定一个链表，返回链表开始入环的第一个节点。 如果链表无环，则返回 nul">
+<meta property="og:type" content="article">
+<meta property="og:title" content="环形链表II">
+<meta property="og:url" content="http://example.com/2023/11/05/algorithmAndDataStructures/leetcode/%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II/%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II/index.html">
+<meta property="og:site_name" content="wxwwt&#39;s site">
+<meta property="og:description" content="环形链表II这是leetcode的142题，朋友说这是链表中比较经典的快慢指针题目，就去做了一下，不过没用快慢指针做出来。用的hash写的，毕竟hash写法比较容易。但是快慢指针的方式很巧妙，就像用两个已知速度的运动员去测量一个跑道是否是环形的。用现实的例子听起来很蠢。。。不过方法是听聪明的，待我慢慢说来。呆！先看题 题目：给定一个链表，返回链表开始入环的第一个节点。 如果链表无环，则返回 nul">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png">
+<meta property="article:published_time" content="2023-11-05T08:13:03.000Z">
+<meta property="article:modified_time" content="2024-08-15T14:35:58.000Z">
+<meta property="article:author" content="我想问问天">
+<meta property="article:tag" content="环形链表II">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2023/11/05/algorithmAndDataStructures/leetcode/%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II/%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-K8M4PR0JSN"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-K8M4PR0JSN');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":1,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '环形链表II',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-08-15 22:35:58'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">99</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">45</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="wxwwt's site"><span class="site-name">wxwwt's site</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">环形链表II</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-11-05T08:13:03.000Z" title="发表于 2023-11-05 16:13:03">2023-11-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-08-15T14:35:58.000Z" title="更新于 2024-08-15 22:35:58">2024-08-15</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="环形链表II"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h3 id="环形链表II"><a href="#环形链表II" class="headerlink" title="环形链表II"></a>环形链表II</h3><p>这是leetcode的142题，朋友说这是链表中比较经典的快慢指针题目，就去做了一下，不过没用快慢指针做出来。<br>用的hash写的，毕竟hash写法比较容易。但是快慢指针的方式很巧妙，就像用两个已知速度的运动员去测量一个跑道是否是环形的。<br>用现实的例子听起来很蠢。。。不过方法是听聪明的，待我慢慢说来。呆！先看题</p>
+<p>题目：<br>给定一个链表，返回链表开始入环的第一个节点。 如果链表无环，则返回 null。</p>
+<p>为了表示给定链表中的环，我们使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 pos 是 -1，则在该链表中没有环。</p>
+<p>说明：不允许修改给定的链表。</p>
+<p> </p>
+<p>示例 1：</p>
+<p>输入：head &#x3D; [3,2,0,-4], pos &#x3D; 1<br>输出：tail connects to node index 1<br>解释：链表中有一个环，其尾部连接到第二个节点。</p>
+<p>示例 2：</p>
+<p>输入：head &#x3D; [1,2], pos &#x3D; 0<br>输出：tail connects to node index 0<br>解释：链表中有一个环，其尾部连接到第一个节点。</p>
+<p>示例 3：</p>
+<p>输入：head &#x3D; [1], pos &#x3D; -1<br>输出：no cycle<br>解释：链表中没有环。</p>
+<p> </p>
+<p>进阶：<br>你是否可以不用额外空间解决此题？</p>
+<p>题解：<br>官方的题解也是两个，一个hash一个叫Floyd算法。<br>hash：<br>首先一个链表有没有成环，其实很自然会想到去遍历一遍这个链表，如果是直线的结构，那肯定最后一个元素会指向null嘛。<br>如果成环的话，遍历就不会停下，一直循环。当然我们肯定不能让程序一直遍历下去，不停止，当发现这个元素不是遍历过了吗？<br>那就停止，返回“这个链表成精了啊”！（成环）<br>这里我一开始想的是用一个hashMap的value去保存这个链表的节点，哈哈哈，当然是不行的，java中的hashMap是key做hash的，value是可以重复的。<br>如果链表的值没有重复的话，那应该还可以，但是链表的节点值是可以重复的，所以用hashMap的key来保存节点就可以了。这里当然用hashSet也是可以的，<br>理论上说，用set是更正确的用法，毕竟只要存一个节点值就好了，并不需要map一样的键值对。但是因为java中的hashSet底层其实就是用hashMap实现的，<br>，所以就没用set，我试过了两种方式结果几乎一样，没有什么很大的差距，都只打败了1&#x2F;3的对手。（这里对于java，用hashMap，hashSet都可以，对于其他语言可能set更合适，其实我也不知道其他语言是怎么实现这俩货，不是重点，略过吧，2333）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> ListNode <span class="title function_">detectCycle</span><span class="params">(ListNode head)</span> &#123;</span><br><span class="line">      <span class="type">ListNode</span> <span class="variable">currentNode</span> <span class="operator">=</span> head;</span><br><span class="line">       Map&lt;ListNode, ListNode&gt; hash = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">       <span class="comment">// 这里有个边界条件就是head可能本来就是空的 要直接返回null</span></span><br><span class="line">       <span class="keyword">while</span> (currentNode != <span class="literal">null</span>) &#123;</span><br><span class="line">           <span class="comment">// 在对链表进行遍历 有出现两次相同 指向节点就是入环的首节点</span></span><br><span class="line">           <span class="comment">// 这里要注意出现两次指的是hash或者说是内存地址 一开始我用的val来判断的出现两次会有问题</span></span><br><span class="line">           <span class="comment">// 因为val的值是可以重复的</span></span><br><span class="line">           <span class="keyword">if</span> (hash.containsKey(currentNode)) &#123;</span><br><span class="line">               <span class="keyword">return</span> currentNode;</span><br><span class="line">           &#125;</span><br><span class="line">           hash.put(currentNode, currentNode);</span><br><span class="line">           currentNode = currentNode.next;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>时间复杂度：o(n)<br>空间复杂度：o(n)</p>
+<p>快慢指针：<br>官方把这个叫Floyd算法，概念和原理可以去网上搜索下，这里我觉得还是叫快慢指针会更好理解。<br>作为题目的进阶，要求不使用额外空间，讲道理也不够严谨，实际上两个指针不还是用了空间嘛，<br>只是说是常数级的空间，很小。费曼学习法，简单来说用最简单的语言把一个事物，概念讲清楚，能让一个小孩子也听懂，<br>所以咱们用一个跑步的例子来解释，现在有一个跑道，你不知道它是圆形的还是直线的，你现在有两个已知速度的运动员，和一个秒表，<br>怎么得出这个跑道是圆的还是直线的（你看这个人他又长又高，就像这个道又大又圆，你们来这里跑步很开心，就像我给你们讲解一样很开心，嘿~ 咳咳，一不小心唱起来了）<br><img src="/"><br>咱们假设有两个远动员小红，小蓝，小蓝跑的比小红快，那么他们两只要沿着跑道去跑，如果这个跑道是直的，他们只会在开始跑的时候相遇，<br>之后小蓝会一直领先小红。但是这个跑道如果是圆的，小蓝小红一直跑着，过了一定的时间，小蓝会再次遇到小红，因为他速度快嘛，小红会反复的被小蓝超越，不过只要除了起点外，相遇一次<br>就可以知道这个跑道是圆的了。现在假设小蓝的速度是小红的两倍，咱们上图。<br>我们计算下从开始到相遇的路程，速度小蓝是小红的两倍，时间相同，根据物理公式 路程 &#x3D; 时间 x 速度。所以小蓝和小红相遇的时候，时间相同，所以小蓝路程是小红的两倍。<br>我们看下小红的路线图，有黑色向下箭头处是他们相遇的地点。<br><img src="http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II/%E5%B0%8F%E7%BA%A2%E8%B7%91%E7%9A%84%E8%B7%AF%E7%A8%8B.png"><br>小蓝的<br><img src="http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II/%E5%B0%8F%E8%93%9D%E8%B7%AF%E7%A8%8B.png"><br>在根据位置来设定一下路程的变量定义，x，y，z。<br><img src="http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II/%E8%B7%AF%E7%A8%8B%E5%85%B3%E7%B3%BB.png"></p>
+<p>小红的路程是 x + y<br>小蓝的路程是 x + y + z + y<br>然后根据上文路程的两倍关系所以 2 * 小红路程 &#x3D; 小蓝路程<br>2x + 2y &#x3D; x + 2y + z。<br>所以看出来了吗，x &#x3D; z。惊不惊喜！？意不意外！？只是图上看起来不太相等，实际上是相等的。<br>我们就知道之前的直线距离x和z是相等的。因此，当两人相遇的时候，在黑色箭头处，我们马上把小红瞬移到开始跑步的起点，<br>然后在复制一个小红从黑色箭头处开始跑步，因为速度一样，x和z也相同，所以他们会在x和y相交处相遇，这里就是跑道的环形起点。<br>也就是题目中要找的那个入环的起始节点。<br>然后代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> ListNode <span class="title function_">getFirstMeetNode</span><span class="params">(ListNode head)</span> &#123;</span><br><span class="line">      <span class="type">ListNode</span> <span class="variable">fast</span> <span class="operator">=</span> head;</span><br><span class="line">      <span class="type">ListNode</span> <span class="variable">slow</span> <span class="operator">=</span> head;</span><br><span class="line">      <span class="comment">// 两个指针在列表上遍历  相遇就返回这个相遇的节点</span></span><br><span class="line">      <span class="comment">// 没有相遇就是无环</span></span><br><span class="line">      <span class="keyword">while</span> (<span class="literal">null</span> != slow &amp;&amp; <span class="literal">null</span> != slow.next) &#123;</span><br><span class="line">          fast = fast.next;</span><br><span class="line">          slow = slow.next.next;</span><br><span class="line">          <span class="keyword">if</span> (fast == slow) &#123;</span><br><span class="line">              <span class="keyword">return</span> fast;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> ListNode <span class="title function_">detectCycle</span><span class="params">(ListNode head)</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (<span class="literal">null</span> == head) &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="type">ListNode</span> <span class="variable">meetNode</span> <span class="operator">=</span> getFirstMeetNode(head);</span><br><span class="line">      <span class="keyword">if</span> (<span class="literal">null</span> == meetNode) &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 从头开始同速度一起跑一次 相遇就是入环节点</span></span><br><span class="line">      <span class="type">ListNode</span> <span class="variable">point1</span> <span class="operator">=</span> head;</span><br><span class="line">      <span class="type">ListNode</span> <span class="variable">point2</span> <span class="operator">=</span> meetNode;</span><br><span class="line">      <span class="keyword">while</span> (point1 != point2) &#123;</span><br><span class="line">          point1 = point1.next;</span><br><span class="line">          point2 = point2.next;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> point2;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>换这个写法马上就打败100%的java提交者了，哈哈哈（所以好的思路的重要性啊）<br>时间复杂度：o(n)  实际上加起来遍历了两次，不过还是o(n)<br>空间复杂度：o(1)  就几个临时用的指针。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">我想问问天</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/11/05/algorithmAndDataStructures/leetcode/%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II/%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II/">http://example.com/2023/11/05/algorithmAndDataStructures/leetcode/%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II/%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">wxwwt's site</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II/">环形链表II</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/11/05/algorithmAndDataStructures/leetcode/%E6%A3%80%E6%9F%A5%E5%B9%B3%E8%A1%A1%E6%80%A7/%E6%A3%80%E6%9F%A5%E5%B9%B3%E8%A1%A1%E6%80%A7/" title="检查平衡性"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">检查平衡性</div></div></a></div><div class="next-post pull-right"><a href="/2023/11/05/algorithmAndDataStructures/%E5%A4%A7%E7%99%BD%E8%AF%9Dbtree%E5%92%8Cb+tree/%E5%A4%A7%E7%99%BD%E8%AF%9Dbtree%E5%92%8Cb+tree/" title="大白话btree和b+tree"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">大白话btree和b+tree</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">我想问问天</div><div class="author-info__description">我想问问天的个人网站，用来记录我的技术文章，生活记录，读书笔记等，希望能给各位读者带来一点帮助或者快乐~</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">99</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">45</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/wxwwt"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II"><span class="toc-number">1.</span> <span class="toc-text">环形链表II</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/04/ai/%E5%85%B3%E4%BA%8E%E5%89%AF%E4%B8%9A%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%B3%E6%B3%95/" title="关于副业的一些想法">关于副业的一些想法</a><time datetime="2024-08-04T12:00:26.000Z" title="发表于 2024-08-04 20:00:26">2024-08-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/04/ai/%E5%BF%8D%E6%B3%95%EF%BC%9A%E5%A3%B0%E9%9F%B3%E5%85%8B%E9%9A%86%E4%B9%8B%E6%9C%AF-GPT-sovits/" title="忍法：声音克隆之术-GPT-sovits">忍法：声音克隆之术-GPT-sovits</a><time datetime="2024-08-04T09:42:18.000Z" title="发表于 2024-08-04 17:42:18">2024-08-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/ai/%E5%9F%BA%E4%BA%8ELangChain%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AAagent/" title="基于LangChain搭建一个agent">基于LangChain搭建一个agent</a><time datetime="2024-05-05T14:43:40.000Z" title="发表于 2024-05-05 22:43:40">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/24/ai/LangChain-Chatchat%E7%9F%A5%E8%AF%86%E5%BA%93%E4%BD%BF%E7%94%A8/" title="LangChain-Chatchat知识库使用">LangChain-Chatchat知识库使用</a><time datetime="2024-03-24T13:05:23.000Z" title="发表于 2024-03-24 21:05:23">2024-03-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/11/ai/Langchain-Chatchat%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/" title="Langchain-Chatchat安装使用">Langchain-Chatchat安装使用</a><time datetime="2024-03-11T14:57:19.000Z" title="发表于 2024-03-11 22:57:19">2024-03-11</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By 我想问问天</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">简</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="/js/tw_cn.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

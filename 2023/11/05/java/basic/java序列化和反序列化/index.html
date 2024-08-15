@@ -1,0 +1,219 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>java序列化和反序列化 | wxwwt's site</title><meta name="author" content="我想问问天"><meta name="copyright" content="我想问问天"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="引语:&nbsp;&nbsp;&nbsp;&nbsp;平时我们在运行程序的时候,创建的对象都在内存中,当程序停止或者中断了,对象也就不复存在了.如果我们能将对象保存起来,在需要使用它的时候在拿出来使用就好了,并且对象的信息要和我们保存时的信息一致.序列化就可以解决了这样的问题.序列化当然不止一种方式,如下:    序列类型 是否跨语言 优缺点    hession 支持 跨语言,序列化后体积小,速">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java序列化和反序列化">
+<meta property="og:url" content="http://example.com/2023/11/05/java/basic/java%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html">
+<meta property="og:site_name" content="wxwwt&#39;s site">
+<meta property="og:description" content="引语:&nbsp;&nbsp;&nbsp;&nbsp;平时我们在运行程序的时候,创建的对象都在内存中,当程序停止或者中断了,对象也就不复存在了.如果我们能将对象保存起来,在需要使用它的时候在拿出来使用就好了,并且对象的信息要和我们保存时的信息一致.序列化就可以解决了这样的问题.序列化当然不止一种方式,如下:    序列类型 是否跨语言 优缺点    hession 支持 跨语言,序列化后体积小,速">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png">
+<meta property="article:published_time" content="2023-11-05T08:13:03.000Z">
+<meta property="article:modified_time" content="2024-08-15T14:35:58.000Z">
+<meta property="article:author" content="我想问问天">
+<meta property="article:tag" content="basic">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2023/11/05/java/basic/java%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-K8M4PR0JSN"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-K8M4PR0JSN');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":1,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'java序列化和反序列化',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-08-15 22:35:58'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">99</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">45</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="wxwwt's site"><span class="site-name">wxwwt's site</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">java序列化和反序列化</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-11-05T08:13:03.000Z" title="发表于 2023-11-05 16:13:03">2023-11-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-08-15T14:35:58.000Z" title="更新于 2024-08-15 22:35:58">2024-08-15</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="java序列化和反序列化"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h3 id="引语"><a href="#引语" class="headerlink" title="引语:"></a>引语:</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;平时我们在运行程序的时候,创建的对象都在内存中,当程序停止或者中断了,对象也就不复存在了.如果我们能将对象保存起来,在需要使用它的时候在拿出来使用就好了,并且对象的信息要和我们保存<br>时的信息一致.序列化就可以解决了这样的问题.序列化当然不止一种方式,如下:</p>
+<table>
+<thead>
+<tr>
+<th align="center">序列类型</th>
+<th align="center">是否跨语言</th>
+<th align="center">优缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">hession</td>
+<td align="center">支持</td>
+<td align="center">跨语言,序列化后体积小,速度较快</td>
+</tr>
+<tr>
+<td align="center">protostuff</td>
+<td align="center">支持</td>
+<td align="center">跨语言,序列化后体积小,速度快,但是需要Schema,可以动态生成</td>
+</tr>
+<tr>
+<td align="center">jackson</td>
+<td align="center">支持</td>
+<td align="center">跨语言,序列化后体积小,速度较快,且具有不确定性</td>
+</tr>
+<tr>
+<td align="center">fastjson</td>
+<td align="center">支持</td>
+<td align="center">跨语言支持较困难,序列化后体积小,速度较快,只支持java,c#</td>
+</tr>
+<tr>
+<td align="center">kryo</td>
+<td align="center">支持</td>
+<td align="center">跨语言支持较困难,序列化后体积小,速度较快</td>
+</tr>
+<tr>
+<td align="center">fst</td>
+<td align="center">不支持</td>
+<td align="center">跨语言支持较困难,序列化后体积小,速度较快，兼容jdk</td>
+</tr>
+<tr>
+<td align="center">jdk</td>
+<td align="center">不支持</td>
+<td align="center">序列化后体积很大,速度快</td>
+</tr>
+</tbody></table>
+<p>我们今天介绍的就是java原生的Serializable序列化.<br>先列一下概念:<br>序列化:序列化是将对象的状态信息转换为可以存储或传输的形式的过程<br>反序列化:从存储或传输形式还原为对象</p>
+<h3 id="Serializable的使用"><a href="#Serializable的使用" class="headerlink" title="Serializable的使用"></a>Serializable的使用</h3><p>序列化使用起来很简单只需要实现Serializable接口即可,然后序列化(序列化是将对象的状态信息转换为可以存储或传输的形式的过程)和反序列化(反之,从存储或传输形式还原为对象).<br>只要使用ObjectOutputStream和ObjectInputStream将对象转为二进制序列和还原为java对象.话不多说,看下代码示例:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">testSerializable</span><span class="params">(String fileName)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">       <span class="keyword">try</span> (<span class="type">ObjectOutputStream</span> <span class="variable">objectOutputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(fileName))) &#123;</span><br><span class="line">           <span class="comment">// &quot;XXX&quot; 的String也可以直接作为对象进行反序列化的</span></span><br><span class="line">           objectOutputStream.writeObject(<span class="string">&quot;test serializable&quot;</span>);</span><br><span class="line">           <span class="type">SerializableData</span> <span class="variable">data</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SerializableData</span>(<span class="number">1</span>, <span class="string">&quot;testStr&quot;</span>);</span><br><span class="line">           objectOutputStream.writeObject(data);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">testDeserializable</span><span class="params">(String fileName)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">       <span class="keyword">try</span> (<span class="type">ObjectInputStream</span> <span class="variable">objectInputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(fileName))) &#123;</span><br><span class="line">           <span class="type">String</span> <span class="variable">str</span> <span class="operator">=</span> (String) objectInputStream.readObject();</span><br><span class="line">           System.out.println(<span class="string">&quot;String的反序列化: &quot;</span> + str);</span><br><span class="line">           <span class="type">SerializableData</span> <span class="variable">readData</span> <span class="operator">=</span> (SerializableData) objectInputStream.readObject();</span><br><span class="line">           System.out.println(<span class="string">&quot;反序列化的对象: &quot;</span> + readData.toString());</span><br><span class="line">           <span class="comment">// 输出:反序列化的对象: SerializableData(testInt=1, testStr=testStr)</span></span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用到的类</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SerializableData</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Integer testInt;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String testStr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第一个方法是传入文件路径,将String和SerializableData对象序列化到fileName指定的文件中;第二个方法是反序列化将文件中的二进制还原为java对象.<br>这里其实比较简单没有什么大问题,稍微提一句的就是writeObject这个方法是可以直接将”写入的字符串”这种形式的对象直接序列化为二进制的.<br>这里还有一点就是反序列化的版本号必须和原本对象的版本号(private static final long serialVersionUID &#x3D; 1L;这个因为是自己测试所以没有写默认是1L,修改后,反序列化的对象版本号不一致会报错)一致,并且jvm能找到反序列化的文件的位置,否则都会失败.</p>
+<h3 id="transient关键字"><a href="#transient关键字" class="headerlink" title="transient关键字"></a>transient关键字</h3><p>简单的使用序列化和反序列化应该没有什么问题,我们再来看看transient关键字是啥?在某些场景下,我们需要写入或者还原的数据中其实有我们不需要透露或者说不想暴露给外部的数据,如果我们将这些隐私的数据序列化,在反序列化出来,<br>那么这些信息就泄漏了.而transient关键字呢,就是防止这种事情的发生.<br>当属性被加上了transient关键字以后,序列化时不会将该属性的值给写入,所以反序列化的时候我们会发现原本写入的数据,还原出来是null.<br>我们写一个例子看看是否是这样呢?</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">testTransient</span><span class="params">()</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">       <span class="type">String</span> <span class="variable">fileName</span> <span class="operator">=</span> <span class="string">&quot;transientData.txt&quot;</span>;</span><br><span class="line">       <span class="keyword">try</span> (<span class="type">ObjectOutputStream</span> <span class="variable">out</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(fileName))) &#123;</span><br><span class="line">           <span class="type">Account</span> <span class="variable">data</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Account</span>(<span class="number">1</span>, <span class="string">&quot;user1&quot;</span>, <span class="string">&quot;123456&quot;</span>);</span><br><span class="line">           out.writeObject(data);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">try</span> (<span class="type">ObjectInputStream</span> <span class="variable">in</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(fileName))) &#123;</span><br><span class="line">           <span class="type">Account</span> <span class="variable">readData</span> <span class="operator">=</span> (Account) in.readObject();</span><br><span class="line">           System.out.println(<span class="string">&quot;transient关键字的对象: &quot;</span> + readData.toString());</span><br><span class="line">           <span class="comment">// 输出: transient关键字的对象: Account(id=1, userName=user1, idCardNumber=null)</span></span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对应的对象</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Account</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String userName;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">transient</span> String idCardNumber;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里我们有一个Account对象,我们不想暴露出我们的省份证号码idCardNumber,于是乎加上了transient关键字.<br>然后将idCardNumber已经初始化过的data对象序列化,当我们再反序列化去取得这个idCardNumber的值的时候,发现确实对象的idCardNumber是null,transient是起作用的.<br>如果是对基本类型数据加上transitent话,会得到对应的默认值,就好比是int的数据类型,得到的就是0.</p>
+<h3 id="Externalizable的使用"><a href="#Externalizable的使用" class="headerlink" title="Externalizable的使用"></a>Externalizable的使用</h3><p>使用过自动的序列化和反序列化以后,我们又想在序列化和反序列化的时候我们能不能自己控制呢?在序列化和反序列化的时候我们能不能加点日志或者其他的操作之类的呢?<br>是的,阔以的.只需要轻轻一点,实现Externalizable接口即可,和Serializable使用差不多.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">testExternalizable</span><span class="params">()</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">fileName</span> <span class="operator">=</span> <span class="string">&quot;testExternalizable.txt&quot;</span>;</span><br><span class="line">        <span class="keyword">try</span> (<span class="type">ObjectOutputStream</span> <span class="variable">out</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(fileName))) &#123;</span><br><span class="line">            <span class="type">Account2</span> <span class="variable">data</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Account2</span>(<span class="string">&quot;user1&quot;</span>, <span class="number">1</span>);</span><br><span class="line">            out.writeObject(data);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> (<span class="type">ObjectInputStream</span> <span class="variable">in</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(fileName))) &#123;</span><br><span class="line">            <span class="type">Account2</span> <span class="variable">readData</span> <span class="operator">=</span> (Account2) in.readObject();</span><br><span class="line">            System.out.println(<span class="string">&quot;Externalizable的对象: &quot;</span> + readData.toString());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用到的对象</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Account2</span> <span class="keyword">implements</span> <span class="title class_">Externalizable</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String userName;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">transient</span> String idCardNumber;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">writeExternal</span><span class="params">(ObjectOutput out)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;执行了writeExternal方法&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">readExternal</span><span class="params">(ObjectInput in)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;执行了readExternal方法&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果执行了上面的代码,恭喜你,获得一个Exception的奖励.大概长这样,java.io.InvalidClassException:XXX no valid constructor,<br><strong>Externalizable在执行的时候会调用默认的无参构造函数,而且记住哦,必须是public的</strong>,如果没有加public你会发现又奖励了一个Exception给你.<br>讲道理这个是比较坑的.下面我们来看看正确的用法,序列化和反序列化都是我们自己控制的:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">testExternalizable</span><span class="params">()</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">       <span class="type">String</span> <span class="variable">fileName</span> <span class="operator">=</span> <span class="string">&quot;testExternalizable.txt&quot;</span>;</span><br><span class="line">       <span class="keyword">try</span> (<span class="type">ObjectOutputStream</span> <span class="variable">out</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(fileName))) &#123;</span><br><span class="line">           <span class="type">Account3</span> <span class="variable">data</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Account3</span>(<span class="string">&quot;user1&quot;</span>, <span class="number">1</span>);</span><br><span class="line">           out.writeObject(data);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">try</span> (<span class="type">ObjectInputStream</span> <span class="variable">in</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(fileName))) &#123;</span><br><span class="line">           <span class="type">Account3</span> <span class="variable">readData</span> <span class="operator">=</span> (Account3) in.readObject();</span><br><span class="line">           System.out.println(<span class="string">&quot;Externalizable的对象: &quot;</span> + readData.toString());</span><br><span class="line">           <span class="comment">/**</span></span><br><span class="line"><span class="comment">            * 输出:</span></span><br><span class="line"><span class="comment">            * 执行了writeExternal方法</span></span><br><span class="line"><span class="comment">            * 执行了readExternal方法</span></span><br><span class="line"><span class="comment">            * Externalizable的对象: Account3(userName=user1, id=1)</span></span><br><span class="line"><span class="comment">            */</span></span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@ToString</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Account3</span> <span class="keyword">implements</span> <span class="title class_">Externalizable</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String userName;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Account3</span><span class="params">()</span> &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Account3</span><span class="params">(String userName, Integer id)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.userName = userName;</span><br><span class="line">        <span class="built_in">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">writeExternal</span><span class="params">(ObjectOutput out)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;执行了writeExternal方法&quot;</span>);</span><br><span class="line">        out.writeObject(userName);</span><br><span class="line">        out.writeInt(id);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">readExternal</span><span class="params">(ObjectInput in)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;执行了readExternal方法&quot;</span>);</span><br><span class="line">        userName = (String) in.readObject();</span><br><span class="line">        id = in.readInt();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结:"></a>总结:</h3><p>1.我们介绍了jdk自带的序列化和反序列化(和其中的一些坑点);<br>2.知道了transient可以将隐私数据不序列化;<br>3.还有Externalizable可以自己来控制序列化和反序列化的进程.</p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料:"></a>参考资料:</h3><p>1.<a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/platform/serialization/spec/serial-arch.html#a6428(%E5%AE%98%E7%BD%91)">https://docs.oracle.com/javase/8/docs/platform/serialization/spec/serial-arch.html#a6428(官网)</a><br>2.<a target="_blank" rel="noopener" href="https://blog.csdn.net/do_bset_yourself/article/details/77173143(%E6%91%98%E5%BD%95%E4%BA%86%E5%90%84%E7%A7%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%96%B9%E5%BC%8F%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9)">https://blog.csdn.net/do_bset_yourself/article/details/77173143(摘录了各种序列化方式的优缺点)</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">我想问问天</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/11/05/java/basic/java%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">http://example.com/2023/11/05/java/basic/java%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">wxwwt's site</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/basic/">basic</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/11/05/java/basic/java%E7%9A%84%E6%B7%B1%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B5%85%E6%8B%B7%E8%B4%9D/" title="java的深拷贝和浅拷贝"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">java的深拷贝和浅拷贝</div></div></a></div><div class="next-post pull-right"><a href="/2023/11/05/java/basic/remove%E9%9B%86%E5%90%88%E7%B1%BB/remove%E9%9B%86%E5%90%88%E7%B1%BB/" title="remove集合类"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">remove集合类</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/11/05/java/basic/Arrays.asList%E5%AD%98%E5%9C%A8%E7%9A%84%E5%9D%91/" title="Arrays.asList存在的坑"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-05</div><div class="title">Arrays.asList存在的坑</div></div></a></div><div><a href="/2023/11/05/java/basic/java%E5%9B%9B%E7%A7%8D%E5%BC%95%E7%94%A8%E7%AE%80%E4%BB%8B/" title="java四种引用简介"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-05</div><div class="title">java四种引用简介</div></div></a></div><div><a href="/2023/11/05/java/basic/ThreadLocal%E7%9A%84%E4%BD%BF%E7%94%A8%E5%92%8C%E5%9D%91%E7%82%B9/" title="ThreadLocal的使用和坑点"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-05</div><div class="title">ThreadLocal的使用和坑点</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">我想问问天</div><div class="author-info__description">我想问问天的个人网站，用来记录我的技术文章，生活记录，读书笔记等，希望能给各位读者带来一点帮助或者快乐~</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">99</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">45</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/wxwwt"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E8%AF%AD"><span class="toc-number">1.</span> <span class="toc-text">引语:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Serializable%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">Serializable的使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#transient%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-number">3.</span> <span class="toc-text">transient关键字</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Externalizable%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">4.</span> <span class="toc-text">Externalizable的使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">总结:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">6.</span> <span class="toc-text">参考资料:</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/04/ai/%E5%85%B3%E4%BA%8E%E5%89%AF%E4%B8%9A%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%B3%E6%B3%95/" title="关于副业的一些想法">关于副业的一些想法</a><time datetime="2024-08-04T12:00:26.000Z" title="发表于 2024-08-04 20:00:26">2024-08-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/04/ai/%E5%BF%8D%E6%B3%95%EF%BC%9A%E5%A3%B0%E9%9F%B3%E5%85%8B%E9%9A%86%E4%B9%8B%E6%9C%AF-GPT-sovits/" title="忍法：声音克隆之术-GPT-sovits">忍法：声音克隆之术-GPT-sovits</a><time datetime="2024-08-04T09:42:18.000Z" title="发表于 2024-08-04 17:42:18">2024-08-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/ai/%E5%9F%BA%E4%BA%8ELangChain%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AAagent/" title="基于LangChain搭建一个agent">基于LangChain搭建一个agent</a><time datetime="2024-05-05T14:43:40.000Z" title="发表于 2024-05-05 22:43:40">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/24/ai/LangChain-Chatchat%E7%9F%A5%E8%AF%86%E5%BA%93%E4%BD%BF%E7%94%A8/" title="LangChain-Chatchat知识库使用">LangChain-Chatchat知识库使用</a><time datetime="2024-03-24T13:05:23.000Z" title="发表于 2024-03-24 21:05:23">2024-03-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/11/ai/Langchain-Chatchat%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/" title="Langchain-Chatchat安装使用">Langchain-Chatchat安装使用</a><time datetime="2024-03-11T14:57:19.000Z" title="发表于 2024-03-11 22:57:19">2024-03-11</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By 我想问问天</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">简</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="/js/tw_cn.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

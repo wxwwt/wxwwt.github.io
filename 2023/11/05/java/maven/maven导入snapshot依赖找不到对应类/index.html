@@ -1,0 +1,170 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>maven导入snapshot依赖找不到对应类 | wxwwt's site</title><meta name="author" content="我想问问天"><meta name="copyright" content="我想问问天"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="maven导入snapshot依赖找不到对应类 导语：最近在做项目的时候，引入公司编写的二方库的包，maven仓库也deploy上去了。然后编译代码的时候发现一直找不到一个类，就编译不通过。一开始以为是本地idea或者maven的缓存导致没有拉取到最新的包。后来经过一系列的无用操作，发现了问题的所在是二方库的snapshot生成有个时间戳导致找不到。下面来看一下解决的过程： 解决步骤：1.首先确认">
+<meta property="og:type" content="article">
+<meta property="og:title" content="maven导入snapshot依赖找不到对应类">
+<meta property="og:url" content="http://example.com/2023/11/05/java/maven/maven%E5%AF%BC%E5%85%A5snapshot%E4%BE%9D%E8%B5%96%E6%89%BE%E4%B8%8D%E5%88%B0%E5%AF%B9%E5%BA%94%E7%B1%BB/index.html">
+<meta property="og:site_name" content="wxwwt&#39;s site">
+<meta property="og:description" content="maven导入snapshot依赖找不到对应类 导语：最近在做项目的时候，引入公司编写的二方库的包，maven仓库也deploy上去了。然后编译代码的时候发现一直找不到一个类，就编译不通过。一开始以为是本地idea或者maven的缓存导致没有拉取到最新的包。后来经过一系列的无用操作，发现了问题的所在是二方库的snapshot生成有个时间戳导致找不到。下面来看一下解决的过程： 解决步骤：1.首先确认">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png">
+<meta property="article:published_time" content="2023-11-05T08:13:03.000Z">
+<meta property="article:modified_time" content="2024-08-15T14:35:58.000Z">
+<meta property="article:author" content="我想问问天">
+<meta property="article:tag" content="maven">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2023/11/05/java/maven/maven%E5%AF%BC%E5%85%A5snapshot%E4%BE%9D%E8%B5%96%E6%89%BE%E4%B8%8D%E5%88%B0%E5%AF%B9%E5%BA%94%E7%B1%BB/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-K8M4PR0JSN"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-K8M4PR0JSN');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":1,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'maven导入snapshot依赖找不到对应类',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-08-15 22:35:58'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">99</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">45</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="wxwwt's site"><span class="site-name">wxwwt's site</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">maven导入snapshot依赖找不到对应类</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-11-05T08:13:03.000Z" title="发表于 2023-11-05 16:13:03">2023-11-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-08-15T14:35:58.000Z" title="更新于 2024-08-15 22:35:58">2024-08-15</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="maven导入snapshot依赖找不到对应类"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>maven导入snapshot依赖找不到对应类</p>
+<h3 id="导语："><a href="#导语：" class="headerlink" title="导语："></a>导语：</h3><p>最近在做项目的时候，引入公司编写的二方库的包，maven仓库也deploy上去了。然后编译代码的时候发现一直找不到一个类，就编译不通过。<br>一开始以为是本地idea或者maven的缓存导致没有拉取到最新的包。后来经过一系列的无用操作，发现了问题的所在是二方库的snapshot生成有个时间戳导致找不到。<br>下面来看一下解决的过程：</p>
+<h3 id="解决步骤："><a href="#解决步骤：" class="headerlink" title="解决步骤："></a>解决步骤：</h3><p>1.首先确认了二方库的版本和项目引入的二方库的版本是不是一致的，结果发现版本是没有问题的<br>2.确认二方库的包是不是真的传到maven仓库了，直接从maven的私服去搜索这个jar包发现这个包是存在的，<br>而且有很多版本，找到了最新版本的那个jar下载下来，使用jd-gui反编译之后发现类也是存在的<br>3.确认是不是idea或者maven的缓存导致使用的一直是原来的二方库jar包？清理了所有缓存之后，依然编译的时候找不到对应的类<br>4.经过以上的三个步骤依然没有解决当前的问题，但是想到引用的第三方的jar并没有出现这样的问题，那会不会是二方库的问题。<br>在把项目打包之后，把打包完成的jar用反编译工具解开。<br>里面大概会有这么几个文件META-INF，项目包文件。然后点开META-INF里面有一个MAINIFEST.MF,里面是编译的配置信息。<br>然后有个叫Class-Path的参数，里面写的是编译引入的jar的路径。仔细研究发现这个引入的二方库的包在class-path的路径里面是<br>xxx-时间戳.jar的这么一个格式。其他的jar包都是很正常的名字.jar的格式，所以很有可能是这个名字有个时间戳的原因导致的。<br>查看资料发现，确实是这样的情况，class-path的路径里面写的是时间戳，但是打包的文件里面对应的jar是-snapshot结尾的名字。<br>所以直接根据mainifest的名字去找对应的jar是找不到的，所以就出现了明明已经引入了jar包但是却编译的时候显示找不到类的问题。</p>
+<p><strong>解决办法就是在maven的打包插件里面加一个useUniqueVersions参数</strong>，意思是是否使用唯一的版本号，默认值是true，如果是带时间戳的这种就会<br>每一个时间戳都是一个版本。如果改为false，就会把后面的时间戳给转为-snapshot这种正常格式的。这样mainifest里面class-path和包名就能统一了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;plugin&gt;</span><br><span class="line">	&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;</span><br><span class="line">	&lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt;</span><br><span class="line">		&lt;configuration&gt;</span><br><span class="line">			&lt;archive&gt;</span><br><span class="line">				&lt;manifest&gt;</span><br><span class="line">					&lt;addClasspath&gt;true&lt;/addClasspath&gt;</span><br><span class="line">					&lt;classpathPrefix&gt;lib/&lt;/classpathPrefix&gt;</span><br><span class="line">					&lt;mainClass&gt;com.xxx.Application&lt;/mainClass&gt;</span><br><span class="line">					&lt;useUniqueVersions&gt;false&lt;/useUniqueVersions&gt;</span><br><span class="line">				&lt;/manifest&gt;</span><br><span class="line">			&lt;/archive&gt;</span><br><span class="line">		&lt;/configuration&gt;</span><br><span class="line">&lt;/plugin&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这里附上maven官网对于这个参数的说明，<a target="_blank" rel="noopener" href="http://maven.apache.org/shared/maven-archiver/index.html">参考链接</a><br>。搜索这个问题的时候发现之前maven的官网在12年就已经有人提出过这个问题了，<a target="_blank" rel="noopener" href="https://issues.apache.org/jira/browse/MJAR-156">问题链接</a>。</p>
+<h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><p>有些东西平时没怎么注意，只理解了怎么使用，在某些时候就可能会耽误大量的时间去解决。这个问题我弄了一天半才解决，之前一直以为是maven仓库或者idaea的缓存问题导致的。这种问题也不明显，因为确实看到了就是二方库的jar包已经打进去了，类文件也是存在的。感觉对maven这一块其实并不是太了解，主要停留在使用层面上，<br>这种问题要能迅速解决的话，一个是自己对maven非常的熟悉，每个插件的用法，每个参数的含义，都很清楚一看就知道是什么问题了，另一个就是积累经验了，多做记录以后再出现了就能知道是什么问题。</p>
+<p>举一反三的话，就是解决问题分为主动的解决和被动的解决，主动就是在还没有出现问题的时候做好预案，对事物有了充分的认识和理解，一旦问题出现就能立马搞定。<br>被动解决就是出现了问题再去了解问题是怎么产生的，改怎么处理。很明显主动要优于被动，所以在时间充裕或者说自己挤出时间多主动去学习，记录，输出才能成为大牛。</p>
+<h3 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h3><p>1.<a target="_blank" rel="noopener" href="https://issues.apache.org/jira/browse/MJAR-156">maven官网问题列表1</a><br>2.<a target="_blank" rel="noopener" href="https://issues.apache.org/jira/browse/MSHARED-169">maven官网问题列表2</a><br>3.<a target="_blank" rel="noopener" href="https://www.javatt.com/p/81337">maven snapshot的jar包中的类找不到</a><br>4.<a target="_blank" rel="noopener" href="http://maven.apache.org/shared/maven-archiver/index.html">maven官网useUniqueVersions的说明</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">我想问问天</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/11/05/java/maven/maven%E5%AF%BC%E5%85%A5snapshot%E4%BE%9D%E8%B5%96%E6%89%BE%E4%B8%8D%E5%88%B0%E5%AF%B9%E5%BA%94%E7%B1%BB/">http://example.com/2023/11/05/java/maven/maven%E5%AF%BC%E5%85%A5snapshot%E4%BE%9D%E8%B5%96%E6%89%BE%E4%B8%8D%E5%88%B0%E5%AF%B9%E5%BA%94%E7%B1%BB/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">wxwwt's site</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/maven/">maven</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/11/05/java/maven/IDEA%E8%A7%A3%E5%86%B3maven%E5%8C%85%E5%86%B2%E7%AA%81%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B0%8F%E6%8A%80%E5%B7%A7/" title="IDEA解决maven包冲突的一些小技巧"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">IDEA解决maven包冲突的一些小技巧</div></div></a></div><div class="next-post pull-right"><a href="/2023/11/05/java/maven/maven%E5%AE%9E%E6%88%98%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B8%80/" title="maven实战学习笔记一"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">maven实战学习笔记一</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/11/05/java/maven/IDEA%E8%A7%A3%E5%86%B3maven%E5%8C%85%E5%86%B2%E7%AA%81%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B0%8F%E6%8A%80%E5%B7%A7/" title="IDEA解决maven包冲突的一些小技巧"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-05</div><div class="title">IDEA解决maven包冲突的一些小技巧</div></div></a></div><div><a href="/2023/11/05/java/maven/maven%E5%AE%9E%E6%88%98%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B8%80/" title="maven实战学习笔记一"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-05</div><div class="title">maven实战学习笔记一</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">我想问问天</div><div class="author-info__description">我想问问天的个人网站，用来记录我的技术文章，生活记录，读书笔记等，希望能给各位读者带来一点帮助或者快乐~</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">99</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">45</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/wxwwt"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%BC%E8%AF%AD%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">导语：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%AD%A5%E9%AA%A4%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">解决步骤：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">总结：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%EF%BC%9A"><span class="toc-number">4.</span> <span class="toc-text">参考资料：</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/04/ai/%E5%85%B3%E4%BA%8E%E5%89%AF%E4%B8%9A%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%B3%E6%B3%95/" title="关于副业的一些想法">关于副业的一些想法</a><time datetime="2024-08-04T12:00:26.000Z" title="发表于 2024-08-04 20:00:26">2024-08-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/04/ai/%E5%BF%8D%E6%B3%95%EF%BC%9A%E5%A3%B0%E9%9F%B3%E5%85%8B%E9%9A%86%E4%B9%8B%E6%9C%AF-GPT-sovits/" title="忍法：声音克隆之术-GPT-sovits">忍法：声音克隆之术-GPT-sovits</a><time datetime="2024-08-04T09:42:18.000Z" title="发表于 2024-08-04 17:42:18">2024-08-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/ai/%E5%9F%BA%E4%BA%8ELangChain%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AAagent/" title="基于LangChain搭建一个agent">基于LangChain搭建一个agent</a><time datetime="2024-05-05T14:43:40.000Z" title="发表于 2024-05-05 22:43:40">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/24/ai/LangChain-Chatchat%E7%9F%A5%E8%AF%86%E5%BA%93%E4%BD%BF%E7%94%A8/" title="LangChain-Chatchat知识库使用">LangChain-Chatchat知识库使用</a><time datetime="2024-03-24T13:05:23.000Z" title="发表于 2024-03-24 21:05:23">2024-03-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/11/ai/Langchain-Chatchat%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/" title="Langchain-Chatchat安装使用">Langchain-Chatchat安装使用</a><time datetime="2024-03-11T14:57:19.000Z" title="发表于 2024-03-11 22:57:19">2024-03-11</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By 我想问问天</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">简</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="/js/tw_cn.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

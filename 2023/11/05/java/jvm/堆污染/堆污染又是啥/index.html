@@ -1,0 +1,178 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>堆污染又是啥 | wxwwt's site</title><meta name="author" content="我想问问天"><meta name="copyright" content="我想问问天"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="最近在看《effective java》的时候，看到一个新鲜词，“堆污染”。乍一看好像是个很高端大气上档次，想起来应该跟jvm关系比较大的概念。后来学习发现是编写代码不规范可能导致的一个异常现象。下面我们一起来学习下，首先这个东西会牵扯到三个东西，第一个是可变参数，第二个是泛型，第三个是@SafeVarargs注解。前两个咱们知道是java5中加入的新特性。第三个是在java7中加入的新注解。 问">
+<meta property="og:type" content="article">
+<meta property="og:title" content="堆污染又是啥">
+<meta property="og:url" content="http://example.com/2023/11/05/java/jvm/%E5%A0%86%E6%B1%A1%E6%9F%93/%E5%A0%86%E6%B1%A1%E6%9F%93%E5%8F%88%E6%98%AF%E5%95%A5/index.html">
+<meta property="og:site_name" content="wxwwt&#39;s site">
+<meta property="og:description" content="最近在看《effective java》的时候，看到一个新鲜词，“堆污染”。乍一看好像是个很高端大气上档次，想起来应该跟jvm关系比较大的概念。后来学习发现是编写代码不规范可能导致的一个异常现象。下面我们一起来学习下，首先这个东西会牵扯到三个东西，第一个是可变参数，第二个是泛型，第三个是@SafeVarargs注解。前两个咱们知道是java5中加入的新特性。第三个是在java7中加入的新注解。 问">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png">
+<meta property="article:published_time" content="2023-11-05T08:13:03.000Z">
+<meta property="article:modified_time" content="2024-08-15T14:35:58.000Z">
+<meta property="article:author" content="我想问问天">
+<meta property="article:tag" content="堆污染">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2023/11/05/java/jvm/%E5%A0%86%E6%B1%A1%E6%9F%93/%E5%A0%86%E6%B1%A1%E6%9F%93%E5%8F%88%E6%98%AF%E5%95%A5/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-K8M4PR0JSN"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-K8M4PR0JSN');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":1,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '堆污染又是啥',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2024-08-15 22:35:58'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">99</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">45</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="wxwwt's site"><span class="site-name">wxwwt's site</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">堆污染又是啥</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-11-05T08:13:03.000Z" title="发表于 2023-11-05 16:13:03">2023-11-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-08-15T14:35:58.000Z" title="更新于 2024-08-15 22:35:58">2024-08-15</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="堆污染又是啥"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>最近在看《effective java》的时候，看到一个新鲜词，“堆污染”。乍一看好像是个很高端大气上档次，想起来应该跟jvm关系比较大的概念。<br>后来学习发现是编写代码不规范可能导致的一个异常现象。下面我们一起来学习下，首先这个东西会牵扯到三个东西，第一个是可变参数，第二个是<br>泛型，第三个是@SafeVarargs注解。前两个咱们知道是java5中加入的新特性。第三个是在java7中加入的新注解。</p>
+<p>问题展示：<br>我们先来看一段代码，然后看下编译器给了什么提示<br>public static <T> List<T> asList(T… a) {<br>       return null;<br>}</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">可以看到编译器直接提示了这个方法可能导致heap pollution，即使这个方法仅仅就返回一个null。</span><br><span class="line">只要参数列表同时是泛型和可变参数，就会出现这样的警告，提示开发者这里可能出现问题。为了解决这个烦人的提示，所以java7增加了</span><br><span class="line">@SafeVarargs的注解来抑制这个提示。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">我们再来看两个例子，帮助理解一下当泛型和可变参数一起的时候可能会带来的问题：</span><br><span class="line">示例一：</span><br><span class="line">第一个例子来自于@SafeVarargs注解中的示例：</span><br></pre></td></tr></table></figure>
+<p>static void m(List<String>… stringLists) {<br>       Object[] array &#x3D; stringLists;<br>       List<Integer> tmpList &#x3D; Arrays.asList(42);<br>       array[0] &#x3D; tmpList; &#x2F;&#x2F; Semantically invalid, but compiles without warnings<br>       String s &#x3D; stringLists[0].get(0); &#x2F;&#x2F; Oh no, ClassCastException at runtime!<br>   }</p>
+<p>   &#x2F;&#x2F; 写了一个main方法去调用<br>   public static void main(String[] args) {<br>        List<String> list &#x3D; new ArrayList&lt;&gt;();<br>        list.add(“1”);<br>        list.add(“2”);<br>        m(list);<br>    }</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">运行程序的话，会报出</span><br></pre></td></tr></table></figure>
+<p>Exception in thread “main” java.lang.ClassCastException: java.lang.Integer cannot be cast to java.lang.String</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">因为在</span><br></pre></td></tr></table></figure>
+<p> String s &#x3D; stringLists[0].get(0);</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">这里stringList[0]已经被array[0] = tmpList修改为了Integer类型的元素，取出来的元素也是Integer类型的，然后因为stringList泛型是String的。</span><br><span class="line">编译器会隐式的加一个强转String，就会报出ClassCastException。</span><br><span class="line"></span><br><span class="line">示例二：</span><br><span class="line">这个例子来自于《effective java》 第三版。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>public static void main(String[] args) {<br>    String[] attr &#x3D; pickTwo(“A”, “B”, “C”);<br>}</p>
+<p>  static <T> T[] pickTwo(T a, T b, T c) {<br>      switch (ThreadLocalRandom.current().nextInt(3)) {<br>          case 0:<br>              return toArray(a, b);<br>          case 1:<br>              return toArray(b, c);<br>          case 2:<br>              return toArray(a, c);<br>      }<br>      throw new AssertionError();<br>  }</p>
+<p>  static <T> T[] toArray(T… args) {<br>      return args;<br>  }</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">想象中的执行过程：</span><br><span class="line">pickTwo的参数是String，所以传给toArray的参数也是String，name最终返回的就是一个String[]的数组。</span><br><span class="line">实际过程：</span><br><span class="line">这里注意toArray就是使用了可变参数和泛型，在编译这个方法的时候，编译器会生成代码，创建一个可变参数数组。</span><br><span class="line">为了接收所给的任意泛型的参数，这个toArray的args的数组会是Object[]，因此toArray返回的T[]，实际上就是</span><br><span class="line">Object[]。所以返回给pickTwo方法的T[]也会是Object[]。最后到了main函数的调用部分会变成Object[],就会抛出Exception in thread &quot;main&quot; java.lang.ClassCastException: [Ljava.lang.Object; cannot be cast to [Ljava.lang.String;</span><br><span class="line">所以书中也给出了一个提示：允许一个方法访问一个泛型可变参数数组是不安全的。</span><br><span class="line"></span><br><span class="line">正确用法：</span><br><span class="line">首先对于每一个带有泛型可变参数或者参数化类型的方法，使用@SafeVarargs注解。</span><br><span class="line">泛型可变参数方法在以下条件是安全的：</span><br><span class="line">1.它没有在可变参数数组中保存任何值</span><br><span class="line">2.它没有对不信任的程序开放数组（简单来说就是调用泛型可变参数的方法如果使用它的数组，结果是可控的不报异常的）</span><br><span class="line">如果这两个条件有一个是不满足的就不是安全的。</span><br><span class="line">经典使用范例：</span><br></pre></td></tr></table></figure>
+<p>@SafeVarargs<br>    static <T> List<T> flatten(List&lt;? extends T&gt;… lists) {<br>        List<T> result &#x3D; new ArrayList&lt;&gt;();<br>        for (List&lt;? extends T&gt; list : lists) {<br>            result.addAll(list);<br>        }<br>        return result;<br>    }</p>
+<pre><code>首先这是一个泛型可变参数列表的方法，然后和上面toArray的区别是，参数列表变成了泛型的List，返回结果也是变成了List。
+然后方法中使用for循环将，所有参数列表的可变参数数组组合成了一个。这样使用就是安全，每一个可变参数的类型的上界都是T，返回的参数最终也都是T。
+</code></pre>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">我想问问天</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/11/05/java/jvm/%E5%A0%86%E6%B1%A1%E6%9F%93/%E5%A0%86%E6%B1%A1%E6%9F%93%E5%8F%88%E6%98%AF%E5%95%A5/">http://example.com/2023/11/05/java/jvm/%E5%A0%86%E6%B1%A1%E6%9F%93/%E5%A0%86%E6%B1%A1%E6%9F%93%E5%8F%88%E6%98%AF%E5%95%A5/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">wxwwt's site</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%A0%86%E6%B1%A1%E6%9F%93/">堆污染</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/11/05/dataBase/mysql/mysql%E8%AF%A5%E4%B8%8D%E8%AF%A5%E4%BD%BF%E7%94%A8%E5%88%86%E5%8C%BA%E8%A1%A8/" title="mysql该不该使用分区表"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">mysql该不该使用分区表</div></div></a></div><div class="next-post pull-right"><a href="/2023/11/05/java/maven/IDEA%E8%A7%A3%E5%86%B3maven%E5%8C%85%E5%86%B2%E7%AA%81%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B0%8F%E6%8A%80%E5%B7%A7/" title="IDEA解决maven包冲突的一些小技巧"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">IDEA解决maven包冲突的一些小技巧</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">我想问问天</div><div class="author-info__description">我想问问天的个人网站，用来记录我的技术文章，生活记录，读书笔记等，希望能给各位读者带来一点帮助或者快乐~</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">99</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">45</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/wxwwt"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/04/ai/%E5%85%B3%E4%BA%8E%E5%89%AF%E4%B8%9A%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%B3%E6%B3%95/" title="关于副业的一些想法">关于副业的一些想法</a><time datetime="2024-08-04T12:00:26.000Z" title="发表于 2024-08-04 20:00:26">2024-08-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/04/ai/%E5%BF%8D%E6%B3%95%EF%BC%9A%E5%A3%B0%E9%9F%B3%E5%85%8B%E9%9A%86%E4%B9%8B%E6%9C%AF-GPT-sovits/" title="忍法：声音克隆之术-GPT-sovits">忍法：声音克隆之术-GPT-sovits</a><time datetime="2024-08-04T09:42:18.000Z" title="发表于 2024-08-04 17:42:18">2024-08-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/ai/%E5%9F%BA%E4%BA%8ELangChain%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AAagent/" title="基于LangChain搭建一个agent">基于LangChain搭建一个agent</a><time datetime="2024-05-05T14:43:40.000Z" title="发表于 2024-05-05 22:43:40">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/24/ai/LangChain-Chatchat%E7%9F%A5%E8%AF%86%E5%BA%93%E4%BD%BF%E7%94%A8/" title="LangChain-Chatchat知识库使用">LangChain-Chatchat知识库使用</a><time datetime="2024-03-24T13:05:23.000Z" title="发表于 2024-03-24 21:05:23">2024-03-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/11/ai/Langchain-Chatchat%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/" title="Langchain-Chatchat安装使用">Langchain-Chatchat安装使用</a><time datetime="2024-03-11T14:57:19.000Z" title="发表于 2024-03-11 22:57:19">2024-03-11</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By 我想问问天</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">简</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="/js/tw_cn.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
