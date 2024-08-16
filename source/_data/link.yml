@@ -19,7 +19,7 @@
 
     - name: cnkirito
       link: https://www.cnkirito.moe/
-      avatar:
+      avatar: https://www.cnkirito.moe/img/avatar.png
       descr: 阿里巴巴中间件研发
 
 
