@@ -1,0 +1,21 @@
+AQS
+
+abstract
+
+queued
+
+synchronizer
+
+java多线程和并发主要使用的是java.util.concurrent，可以说是java的核心工具包了。而juc中非常重要的一个类就是
+AQS（AbstractQueuedSynchronizer 抽象队列同步器），CountDownLatch， ReentrantLock，都使用到了它。今天我们就来讲一讲AQS的相关知识。
+首先解释下这个名字
+Abstract 抽象的：因为它是一个抽象类，里面有很多公共的方法，比如acquire(), release(),acquireShared(),releaseShared(), 这些方法是AQS加锁，释放锁的版本方法
+Queued 排队的，队列的：AQS里面对争抢资源的线程，是使用了CLH队列来管理排队的线程，下面是源码中的注释，对CLH做了一个简单的说明。
+The wait queue is a variant of a "CLH" (Craig, Landin, and Hagersten) lock queue. CLH locks are normally used for spinlocks.
+Synchronizer 同步器：它的作用是作为保证线程之间竞争资源，管控这不同线程之间的阻塞和释放。
+
+实现原理：
+
+1.cas + state :
+
+2.CLH :

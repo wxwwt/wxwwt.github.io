@@ -1,0 +1,25 @@
+- class_name: 友情链接
+  class_desc: 那些人，那些事 (排名不分先后)
+  link_list:
+    - name: hollischuang
+      link: https://www.hollischuang.com/
+      avatar: http://www.hollischuang.com/wp-content/uploads/2018/10/Hollis.png
+      descr: 天道不一定酬所有勤，但是，天道只酬勤
+
+    - name: crazywong
+      link: https://blog.crazywong.com/
+      avatar: https://blog.crazywong.com/img/avatar.png
+      descr: 熱衷學習，熱衷生活
+
+    - name: 精灵王
+      link: https://blog.crazywong.com/
+      avatar: https://jingling.im/assets/jingling.svg
+      descr: 专注于全栈开发技术分享和开源项目讨论。博客涵盖 Web 开发、系统设计等技术文章，同时探讨健康生活方式
+
+
+    - name: cnkirito
+      link: https://www.cnkirito.moe/
+      avatar:
+      descr: 阿里巴巴中间件研发
+
+

@@ -1,0 +1,40 @@
+###引语： 这几周事情比较多，两周没写博客了，这周总算把hadoop的实例给运行起来，然后跑了一下官方的wordcount例子（用于统计文件中单词出现的次数）。
+接下来是我成功运行实例的记录。运行的前提是安装配置好hadoop（可以参考我上一篇博客：[hadoop伪分布式安装记录](https://juejin.im/post/5d3db3b2e51d457761476235)）
+
+### 运行步骤：
+1.先准备一个包含单词的文件，然后将这个文件上传到linux服务器上。
+文件内容:
+```
+hello world hello hadoop
+abc hadoop aabb hello word
+count test hdfs mapreduce
+```
+2.使用hdfs的命令创建好输入文件的目录（hfds的命令基本上和linux一样，可以去官网上查看下） hadoop fs -mkdir /input/wordcount
+然后在创建一个输出目录/output为后续hadoop存放运行结果
+
+3.然后将文件放入到hadoop的文件系统中hadoop fs -put /home/file1 /input/wordcount
+创建完可以使用ls检查一下是否文件存在 hadoop fs -ls -R /
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/hadoop%E8%BF%90%E8%A1%8C%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%AE%9E%E4%BE%8Bwordcount/%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95.png)
+
+4.再进入到hadoop的share/hadoop/mapreduce中，有一个hadoop-mapreduce-examples-3.1.2.jar
+通过hadoop jar hadoop-mapreduce-examples-3.1.2.jar 可以查看到这个官方给的例子里面有哪些程序可以执行
+如下：
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/hadoop%E8%BF%90%E8%A1%8C%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%AE%9E%E4%BE%8Bwordcount/hadoop%E4%BE%8B%E5%AD%90.png)
+可以看到很多自带的使用程序，我们这里就使用wordcount。
+执行命令
+```
+hadop jar hadoop-mapreduce-examples-3.1.2.jar /input/wordcount /output/wordcount
+```
+最后的两个参数一个是文件的输入路径，就是我们之前创建再hdfs的路径，第二个参数是文件的输出路径，
+如果没有的话hadoop会自己创建。
+5.然后首先会进行map的过程，在使reduce的过程，这里可以理解为分而治之的步骤，map是多台机器上分别处理文件的中间结果，然后通过reduce（减少，聚合）把结果给汇总。
+而且是先map执行完再回执行reduce。
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/hadoop%E8%BF%90%E8%A1%8C%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%AE%9E%E4%BE%8Bwordcount/mapreduce.png)
+6.去输出文件中查看结果，output/wordcount里面会有三个文件，有一个带part的就是输出结果,可以使用hadoop fs -cat 输出文件的路径查看结果
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/hadoop%E8%BF%90%E8%A1%8C%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%AE%9E%E4%BE%8Bwordcount/%E8%BE%93%E5%87%BA%E7%BB%93%E6%9E%9C.png)
+
+### 总结：
+虽然看起来步骤不是很多，内容也比较简单，但是坑还是挺多的。要注意的点：
+1.伪分布式搭建的hadoop，hostname这个要设置好，要和配置文件中一致，实在不行就直接指定127.0.0.1（反正我是这样解决了）
+2.yarn的内存配置要合理，太小了发现会一直卡在runing job这个环节或者一直卡在map 0%这里，此时要去yarn-site中设置好内存的大小（根据实际服务器的内存设置，我设置的是2048M后就可以了）
+3.如果发现卡在某个环节，记得去查看hadoop安装目录下的logs，里面有很多日志类型，包括nodeManageer，resourceManager等，执行不动了，日志里面会有相应的日志和提示可以帮助发现问题。

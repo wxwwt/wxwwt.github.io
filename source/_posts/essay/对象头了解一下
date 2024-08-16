@@ -1,0 +1,359 @@
+
+
+在《深入Java虚拟机》第三版的第二章里面有讲到关于对象的内存布局的知识，今天我们就来聊一聊这里面的对象头，并且会对
+创建对象，对象头里面的信息变化做一个实践的程序练习。
+
+## 对象的内存布局
+首先我们要知道对象在内存的布局是什么样子？
+对象的内存布局可以分为三块：
+1. 对象头  header：
+是今天要讲的重点，对象头又分为两部分，markWord（翻译为标记字，但一般还是用英文markWord在称呼使用）和classPoint（类型指针）。
+类型指针，指向的是这个对象类型的元数据，java虚拟机用这个指针来确定该对象是什么类的实例。如果对象是java数组，那么对象头中还有一块
+用于标记数组长度的的数据。markWord里面储存了对象自身的运行时数据，比如hashCode，分代年龄，锁状态等信息，等会后面会详细讲。
+2. 实例数据 instance Data：
+  这个没什么好说的，就是对象真正存储的信息。
+3. 对齐填充 padding
+ 不是必然存在的，可能会没有。Hotspot里面规定对象的起始地址必须是8字节的整数倍，
+也就是说加上padding后的对象大小必须是8字节的整数倍。也就是说如果header和instanceData加起来还不是8的整数倍，
+那么padding就会用来补全对象的大小，让对象凑成8字节的倍数。
+
+## MarkWord
+
+了解了对象的内存布局之后，我们开始讲markWord储存的信息，markWord在32位和64位系统中的长度是32和64，如果64位系统开启了压缩
+指针的话，那也是32位。
+
+### 压缩指针
+
+查看jvm默认参数：java -XX:+PrintCommandLineFlags -version
+```
+-XX:InitialHeapSize=132313536
+-XX:MaxHeapSize=2117016576
+-XX:+PrintCommandLineFlags
+-XX:+UseCompressedClassPointers
+-XX:+UseCompressedOops
+-XX:-UseLargePagesIndividualAllocation
+-XX:+UseParallelGC
+java version "1.8.0_162"
+Java(TM) SE Runtime Environment (build 1.8.0_162-b12)
+Java HotSpot(TM) 64-Bit Server VM (build 25.162-b12, mixed mode)
+```
+可以看到带有压缩关键字的有两个参数UseCompressedClassPointers，UseCompressedOops。而我们说的压缩指针指的是
+oop（ordinary object pointer）普通对象指针。另外一个也是对象头里面的指针，就是之前说过的classPoint类型指针，
+这两块内容都是可以压缩的，也都是默认开启的，因为指针越长寻址也就越慢，性能会有损耗，所以默认开启压缩指针。
+压缩指针参数：启用指针压缩:-XX:+UseCompressedOops(默认开启)，禁止指针压缩:-XX:-UseCompressedOops
+
+### MarkWord信息
+openJdk的源码里面是这么注释的：
+```
+//  32 bits:
+//  --------
+//  hash:25 ------------>| age:4    biased_lock:1 lock:2 (normal object)
+//  JavaThread*:23 epoch:2 age:4    biased_lock:1 lock:2 (biased object)
+//  size:32 ------------------------------------------>| (CMS free block)
+//  PromotedObject*:29 ---------->| promo_bits:3 ----->| (CMS promoted object)
+//
+//  64 bits:
+//  --------
+//  unused:25 hash:31 -->| unused:1   age:4    biased_lock:1 lock:2 (normal object)
+//  JavaThread*:54 epoch:2 unused:1   age:4    biased_lock:1 lock:2 (biased object)
+//  PromotedObject*:61 --------------------->| promo_bits:3 ----->| (CMS promoted object)
+//  size:64 ----------------------------------------------------->| (CMS free block)
+//
+//  unused:25 hash:31 -->| cms_free:1 age:4    biased_lock:1 lock:2 (COOPs && normal object)
+//  JavaThread*:54 epoch:2 cms_free:1 age:4    biased_lock:1 lock:2 (COOPs && biased object)
+//  narrowOop:32 unused:24 cms_free:1 unused:4 promo_bits:3 ----->| (COOPs && CMS promoted object)
+//  unused:21 size:35 -->| cms_free:1 unused:7 ------------------>| (COOPs && CMS free block)
+```
+本来打算整理成一个中文的表格，但是一想其实这个注释版本的已经很清楚了，而且平时也一般不会用到这个，没必要死记，
+遇到具体问题的时候把这个表格拿出来一看，对照一下就很明白了。只是要稍微注意下，64位的有两部分，上面的是未开启压缩指针的，
+下面的是开启了压缩指针的，一看到注释里面这个COOPS，联想到上面讲的压缩指针就很容易理解了吧。
+
+我们主要把这个锁的状态拿出来讲一下，等会会举几个例子，使用JOL（java object layout）打印下对象头的信息，这里要注意一点就是表格里面虽然是从左往右写的，
+但是实际上我们JOL打印出来是反的哦。因为java是BigEndian的，低字节保存到高位中，所以JOL打印出来的内容，我们看最前面的8位就好了，
+可以看上面的注释表格，都是8位中的后3位保存的锁的状态信息。（平时我们写java代码的时候也不关心这个问题，因为java已经帮我们处理了，屏蔽了
+这个底层的细节）。
+
+参考源码中的解释（[源码地址 src/share/vm/oops/markOop.hpp](http://hg.openjdk.java.net/jdk8u/jdk8u/hotspot/file/69087d08d473/src/share/vm/oops/markOop.hpp)）：
+```
+//    [JavaThread* | epoch | age | 1 | 01]       lock is biased toward given thread
+//    [0           | epoch | age | 1 | 01]       lock is anonymously biased
+//
+//  - the two lock bits are used to describe three states: locked/unlocked and monitor.
+//
+//    [ptr             | 00]  locked             ptr points to real header on stack
+//    [header      | 0 | 01]  unlocked           regular object header
+//    [ptr             | 10]  monitor            inflated lock (header is wapped out)
+//    [ptr             | 11]  marked             used by markSweep to mark an object
+//                                               not valid at any other time
+
+enum { locked_value             = 0,  // 轻量级锁
+       unlocked_value           = 1,  // 无锁，普通对象
+       monitor_value            = 2,  // 重量级锁
+       marked_value             = 3,  // GC标记
+       biased_lock_pattern      = 5   // 偏向锁
+```
+枚举的值翻译为二进制就是对应的000,001,010,011,101,我们结合源码的注释和这个枚举可以很容易的知道有5种状态（五个枚举），我把
+中文注释也加上去了，然后可以表示6种情况，看注释可以知道是偏向锁的时候，有JavaThread指针的偏向，和无指针的偏向（又叫匿名偏向）。
+
+### 验证对象头信息
+
+验证对象头的信息我们要用到JOL包（上面也提到过，它是openjdk提供的分析工具），接下来我们对照这5中情况一个个来验证，但是GC标记这个没法
+测试（至少我没想到办法也没找到类似的资料），下面的测试我都加了一个 -XX:+PrintCommandLineFlags，是为了方便大家看到目前有哪些jvm参数。
+
+#### 1.普通对象
+```
+/**
+  * -XX:InitialHeapSize=132313536 -XX:MaxHeapSize=2117016576 -XX:+PrintCommandLineFlags -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:-UseLargePagesIndividualAllocation -XX:+UseParallelGC
+  * java.lang.Object object internals:
+  *  OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+  *       0     4        (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)
+  *       4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+  *       8     4        (object header)                           e5 01 00 20 (11100101 00000001 00000000 00100000) (536871397)
+  *      12     4        (loss due to the next object alignment)
+  * Instance size: 16 bytes
+  * Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+  */
+ @Test
+ public  void test1() {
+     Object object = new Object();
+     System.out.println(ClassLayout.parseInstance(object).toPrintable());
+ }
+
+```
+可以看到object header占了12个字节，前两个是markword，后一个是classPoint，因为classPoint默认是压缩的，所以它只有4字节。
+然后object header加上classPoint是12个字节对吧，不是8的整数倍，所以padding就出来了自动补全加了4字节，因此整个Object对象是
+占用了16字节。
+
+### 2.不使用oops压缩的普通对象
+```
+/**
+ * 不使用压缩oops vm参数：-XX:-UseCompressedOops
+ *
+ * -XX:InitialHeapSize=132313536 -XX:MaxHeapSize=2117016576 -XX:+PrintCommandLineFlags -XX:-UseCompressedOops -XX:-UseLargePagesIndividualAllocation -XX:+UseParallelGC
+ * java.lang.Object object internals:
+ *  OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+ *       0     4        (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)
+ *       4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+ *       8     4        (object header)                           00 1c 54 17 (00000000 00011100 01010100 00010111) (391388160)
+ *      12     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+ * Instance size: 16 bytes
+ * Space losses: 0 bytes internal + 0 bytes external = 0 bytes total
+ */
+@Test
+public  void test2() {
+    Object object = new Object();
+    System.out.println(ClassLayout.parseInstance(object).toPrintable());
+}
+```
+这里我们从现象可以看到，虽然我们关闭的是oops的指针压缩，但是却发现类型指针的压缩竟然也是被关闭了，16个字节全部都是object header。
+这里推断是这两个参数基本上是联动的，修改其中一个，另一个也会跟着开启或者关闭之类的，后续等我看了hotspot源码后再来验证这个问题，
+今天我们先继续往下看，不耽误其他例子的验证
+
+### 3. 不使用类型指针压缩
+```
+/**
+ * 不使用类型指针压缩 -XX:-UseCompressedClassPointers
+ *
+ * java.lang.Object object internals:
+ *  OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+ *       0     4        (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)
+ *       4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+ *       8     4        (object header)                           00 1c 5f 17 (00000000 00011100 01011111 00010111) (392109056)
+ *      12     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+ * Instance size: 16 bytes
+ * Space losses: 0 bytes internal + 0 bytes external = 0 bytes total
+ */
+@Test
+public  void test3() {
+    Object object = new Object();
+    System.out.println(ClassLayout.parseInstance(object).toPrintable());
+}
+```
+
+可以看到test2，test3在类型指针压缩和对象指针分别开启关闭的情况下，都会是不生效的，都会是16字节，必须两个都是开启状态，objectHeader才会是占用12字节，8字节的markWord，4字节的classPointer。
+而且上面的三个测试都是markword结尾都是001，无锁状态，符合我们的预期。
+
+### 4. 偏向锁状态
+```
+/**
+    * 偏向锁状态测试 -XX:BiasedLockingStartupDelay=0
+    *
+    * java.lang.Object object internals:
+    *  OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+    *       0     4        (object header)                           05 00 00 00 (00000101 00000000 00000000 00000000) (5)
+    *       4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+    *       8     4        (object header)                           e5 01 00 20 (11100101 00000001 00000000 00100000) (536871397)
+    *      12     4        (loss due to the next object alignment)
+    * Instance size: 16 bytes
+    * Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+    */
+   @Test
+   public  void test4() {
+       Object object = new Object();
+       System.out.println(ClassLayout.parseInstance(object).toPrintable());
+   }
+```
+jdk8默认是jvm启动4秒后开启偏向锁，所以我们直接关闭偏向锁的延迟就可以看到markWord变化了，101-偏向锁，符合上面的介绍，另外我们也在测试一下默认
+偏向锁延迟真的是4秒吗，因为我们test1已经是001-无锁，所以我们先让程序sleep大于4秒，在打印markWord的状态看看，虽然不是很严谨的证明延迟是4秒，但是也
+大致验证了这个偏向锁延迟生效确实是存在的。要继续探究的话可以看openJdk源码[](http://hg.openjdk.java.net/jdk8u/jdk8u/hotspot/file/69087d08d473/src/share/vm/runtime/biasedLocking.cpp)，
+openJdk源码中biasedLocking.cpp和globals.hpp结合起来看，确实延迟是4秒。
+```
+http://hg.openjdk.java.net/jdk8u/jdk8u/hotspot/file/69087d08d473/src/share/vm/runtime/biasedLocking.cpp#l89
+
+void BiasedLocking::init() {
+  // If biased locking is enabled, schedule a task to fire a few
+  // seconds into the run which turns on biased locking for all
+  // currently loaded classes as well as future ones. This is a
+  // workaround for startup time regressions due to a large number of
+  // safepoints being taken during VM startup for bias revocation.
+  // Ideally we would have a lower cost for individual bias revocation
+  // and not need a mechanism like this.
+  if (UseBiasedLocking) {
+    if (BiasedLockingStartupDelay > 0) {
+      EnableBiasedLockingTask* task = new EnableBiasedLockingTask(BiasedLockingStartupDelay);
+      task->enroll();
+    } else {
+      VM_EnableBiasedLocking op(false);
+      VMThread::execute(&op);
+    }
+  }
+}
+
+https://hg.openjdk.java.net/jdk8u/jdk8u/hotspot/file/69087d08d473/src/share/vm/runtime/globals.hpp
+
+product(intx, BiasedLockingStartupDelay, 4000,
+      "Number of milliseconds to wait before enabling biased locking")
+```
+
+### 5.验证sleep4100毫秒后的偏向状态
+```
+/**
+   * 偏向锁状态测试  验证sleep 4100ms后markword的状态
+   * java.lang.Object object internals:
+   *  OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+   *       0     4        (object header)                           05 00 00 00 (00000101 00000000 00000000 00000000) (5)
+   *       4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+   *       8     4        (object header)                           e5 01 00 20 (11100101 00000001 00000000 00100000) (536871397)
+   *      12     4        (loss due to the next object alignment)
+   * Instance size: 16 bytes
+   * Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+   */
+  @Test
+  public  void test5() throws InterruptedException {
+      Thread.sleep(4100);
+      Object object = new Object();
+      System.out.println(ClassLayout.parseInstance(object).toPrintable());
+  }
+```
+可以看到sleep4秒多后，确实也是101-偏向锁的状态
+
+### 6.验证轻量级锁的状态
+```
+/**
+ * 轻量级锁测试：默认开启 -XX:+UseCompressedClassPointers -XX:+UseCompressedOops
+ *   java.lang.Object object internals:
+ *   OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+ *   0     4        (object header)                           18 df 38 03 (00011000 11011111 00111000 00000011) (54058776)
+ *   4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+ *   8     4        (object header)                           e5 01 00 20 (11100101 00000001 00000000 00100000) (536871397)
+ *   12     4        (loss due to the next object alignment)
+ *   Instance size: 16 bytes
+ *   Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+ * @throws InterruptedException
+ */
+@Test
+public  void test6() throws InterruptedException {
+    Object object = new Object();
+    synchronized (object) {
+        System.out.println(ClassLayout.parseInstance(object).toPrintable());
+    }
+}
+```
+可以看到是00011000，以0结尾的是轻量级锁
+
+### 7.偏向锁和轻量级锁一起的情况
+```
+/**
+   * 轻量级锁测试：默认开启 -XX:+UseCompressedClassPointers -XX:+UseCompressedOops
+   * 并且去掉偏向锁的延迟： -XX:BiasedLockingStartupDelay=0
+   *  java.lang.Object object internals:
+   *  OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+   *  0     4        (object header)                           08 e0 e2 02 (00001000 11100000 11100010 00000010) (48422920)
+   *  4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+   *  8     4        (object header)                           e5 01 00 20 (11100101 00000001 00000000 00100000) (536871397)
+   *  12     4        (loss due to the next object alignment)
+   *  Instance size: 16 bytes
+   *  Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+   * @throws InterruptedException
+   */
+  @Test
+  public  void test7() throws InterruptedException {
+      Object object = new Object();
+      synchronized (object) {
+          System.out.println(ClassLayout.parseInstance(object).toPrintable());
+      }
+  }
+```
+偏向锁开启的情况下，如果涉及到同步锁，就会变成轻量级锁。
+
+### 8.重量级锁验证
+```
+/**
+    * 重量级锁测试：-XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:BiasedLockingStartupDelay=0
+    * 当前线程：线程2java.lang.Object object internals:
+    * OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+    * 0     4        (object header)                           8a fe 4c 1a (10001010 11111110 01001100 00011010) (441253514)
+    * 4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+    * 8     4        (object header)                           e5 01 00 20 (11100101 00000001 00000000 00100000) (536871397)
+    * 12     4        (loss due to the next object alignment)
+    * Instance size: 16 bytes
+    * Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+    * 当前线程：线程1java.lang.Object object internals:
+    * OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+    * 0     4        (object header)                           8a fe 4c 1a (10001010 11111110 01001100 00011010) (441253514)
+    * 4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+    * 8     4        (object header)                           e5 01 00 20 (11100101 00000001 00000000 00100000) (536871397)
+    * 12     4        (loss due to the next object alignment)
+    * Instance size: 16 bytes
+    * Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+    *
+    * @throws InterruptedException
+    */
+   @Test
+   public void test8() throws InterruptedException {
+       Object object = new Object();
+       Thread t1 = new Thread(() -> {
+           synchronized (object) {
+               System.out.println("当前线程：" + Thread.currentThread().getName() + ClassLayout.parseInstance(object).toPrintable());
+           }
+       }, "线程1"
+       );
+
+       Thread t2 = new Thread(() -> {
+           synchronized (object) {
+               System.out.println("当前线程：" + Thread.currentThread().getName() + ClassLayout.parseInstance(object).toPrintable());
+           }
+       }, "线程2"
+       );
+
+
+       t1.start();
+       t2.start();
+
+       t1.join();
+       t2.join();
+   }
+```
+我们发现当有两个线程开始争抢资源的时候，test7里面的轻量级锁升级成了重量级锁，显示的是10001010，尾数是10，重量级锁（monitor）。
+到此为止，对象头上的状态除了GC没想到办法监测之外，基本上都验证过了，也见识了偏向锁->轻量级锁->重量级锁的升级过程，完结撒花~
+[验证的代码地址](https://github.com/wxwwt/java-practice/blob/master/src/main/java/com/scott/java/task/markword/MarkWordTest.java)
+
+
+
+
+
+
+参考资料：
+1.[压缩指针](https://juejin.cn/post/6844903768077647880)
+2.[大小端参考资料](https://wiki.sei.cmu.edu/confluence/display/java/FIO12-J.+Provide+methods+to+read+and+write+little-endian+data)

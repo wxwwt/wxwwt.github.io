@@ -1,0 +1,94 @@
+  mysql行记录格式
+
+# 概述：
+mysql的行记录格式是跟随着文件格式一起变化的，官网上说Antelope是早期的文件格式，它又包含了 COMPACT 和 REDUNDANT 行格式；
+另外最新的文件格式是Barracuda ，它包含COMPRESSED 和 DYNAMIC 行格式，与 COMPRESSED 和 DYNAMIC 行格式相关的功能包括压缩表、页外列的高效存储以及最多 3072 字节的索引键前缀。
+在官网上没有找到这两个文件格式具体是从什么时候开始启用和设置为默认配置的，如果有朋友知道文件格式是从什么时候开始被使用的可以评论发一下，我实在是没有找到，书上也没有看到。
+但是之前下载的mysql5.6.39,直接查看innodb_file_format=Antelope,然后另外一台电脑上安装的mysql5.7是Barracuda。大致可以认为5.6默认是Antelope格式，5.7默认是Barracuda。不过具体使用的时候还是
+看下innodb_file_format格式比较好。
+下面是5.6和5.7实际文件格式对比：
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/mysql/mysql%E8%A1%8C%E8%AE%B0%E5%BD%95%E6%A0%BC%E5%BC%8F/mysql5.6rowformat.png)
+
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/mysql/mysql%E8%A1%8C%E8%AE%B0%E5%BD%95%E6%A0%BC%E5%BC%8F/mysql5.7rowformat.png)
+
+# 行格式:
+文件格式的思维导图是这样：
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/mysql/mysql%E8%A1%8C%E8%AE%B0%E5%BD%95%E6%A0%BC%E5%BC%8F/mysql%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE.png)
+
+从官网上翻译的表格对比
+
+
+|行格式|	紧凑的存储特性	|增强的可变长度列存储	|大索引键前缀支持	|压缩支持|	支持的表空间类型	|所需文件格式|
+--|--|--|--|--|--|--
+|REDUNDANT|	否|	否|	否|	否|	system, file-per-table, general	|Antelope or Barracuda|
+|COMPACT|	是	|否	|否	|否	|system, file-per-table, general	|Antelope or Barracuda|
+|DYNAMIC|	是	|是|	是	|否|	system, file-per-table, general	 |Barracuda|
+|COMPRESSED|是|	是|	是	|是|file-per-table, general|	 Barracuda|
+
+
+## REDUNDANT行格式：
+- 介绍：redundant提供了和老版本mysql的兼容，并且是同时都被antelope和barracuda支持。使用REDUNDANT行格式的表将前768个字节的可变长度列值（VARCHAR、VARBINARY 以及 BLOB 和 TEXT 类型）存储在 B 树节点内的索引记录中，其余部分存储在溢出页上。大于或等于768 字节的固定长度列被编码为可变长度列，可以在页外存储。
+例如，如果字符集的最大字节长度大于 3，则 CHAR(255) 列可以超过 768 个字节，就像使用utf8mb4一样。
+这里稍微解释一下上面这句话，CHAR（255）这个255说的是字符数，uft8的格式是三个字节是一个字符来表示中文，假设VARCHAR(10)，所以10乘以3等于30。如果使用utf8mb4编码，是4个字节的话，就是10乘以4了，字节数就变成40了。
+要记住varchar这种括号后面保存的都是字符数而不是字节数。
+因此如果储存的列的值小于等于768字节的话，mysql就不会使用溢出页，数据直接保存在mysql的btree节点中，可以节省IO。这里简单提一下mysql的行溢出，如图：
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/mysql/mysql%E8%A1%8C%E8%AE%B0%E5%BD%95%E6%A0%BC%E5%BC%8F/%E8%A1%8C%E6%BA%A2%E5%87%BA%E5%9B%BE%E7%A4%BA.png)
+图中所示，对于变长字段类型包括blob、text、varchar都是这样的储存方式，如果数据没有超过768字节，那么就直接储存在btree节点之中，如果是超过768的部分就会储存在溢出页里面。
+- 储存结构：![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/mysql/mysql%E8%A1%8C%E8%AE%B0%E5%BD%95%E6%A0%BC%E5%BC%8F/redundant%E6%A0%BC%E5%BC%8F.png)
+- 头信息：![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/mysql/mysql%E8%A1%8C%E8%AE%B0%E5%BD%95%E6%A0%BC%E5%BC%8F/redundant%E5%A4%B4%E4%BF%A1%E6%81%AF.png)
+- 储存特征：
+1. 每个索引记录包含一个6字节的标头。标头用于将连续记录链接在一起，并用于行级锁定。
+2. 聚集索引中的记录包含所有用户定义列的字段。此外，还有一个6字节的事务ID字段和一个7字节的滚动指针字段。
+3. 如果没有为表定义主键，则每个聚集索引记录还包含一个6字节的行ID字段。
+4. 每个二级索引记录包含为聚集索引键定义的所有不在二级索引中的主键列。
+5. 记录包含指向记录的每个字段的指针。如果一条记录的字段总长度小于128字节，则指针为1字节；否则，两个字节。指针数组称为记录目录。指针指向的区域是记录的数据部分。
+6. 在内部，诸如CHAR(10)之类的固定长度字符列以固定长度格式存储。不会从 VARCHAR 列中截断尾随空格。
+7. 大于或等于768字节的固定长度列被编码为可变长度列，可以在页外存储。例如，如果字符集的最大字节长度大于3，则CHAR(255)列可以超过768个字节，就像使用utf8mb4一样。
+8. SQL的NULL值在记录目录中保留一或两个字节。如果SQL的NULL值存储在可变长度列中，则在记录的数据部分保留零字节。对于定长列，该列的定长保留在记录的数据部分。
+为NULL值保留固定空间允许将列从NULL就地更新为非NULL值，而不会导致索引页碎片。
+
+## COMPACT行记录
+- 介绍：与 REDUNDANT 行格式相比，COMPACT 行格式减少了大约 20% 的行存储空间，代价是增加了某些操作的 CPU 使用率。如果工作负载是典型的受缓存命中率和磁盘速度限制的工作负载，那么 COMPACT 格式可能会更快。如果工作负载受 CPU 速度限制，紧凑格式可能会更慢。简单来说compact对于IO密集型更有优势，对于计算密集型任务劣势更大。
+- 储存结构：![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/mysql/mysql%E8%A1%8C%E8%AE%B0%E5%BD%95%E6%A0%BC%E5%BC%8F/compact%E5%82%A8%E5%AD%98%E7%BB%93%E6%9E%84.png)
+- 头信息：![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/mysql/mysql%E8%A1%8C%E8%AE%B0%E5%BD%95%E6%A0%BC%E5%BC%8F/compact%E5%A4%B4%E4%BF%A1%E6%81%AF.png)
+- 储存特性：
+1. 每个索引记录都包含一个5字节的标头，该标头前面可能有一个可变长度的标头。标头用于将连续记录链接在一起，并用于行级锁定。
+2. 记录头的可变长度部分包含一个位向量，用于指示NULL列。如果索引中可以为NULL的列数为N，则位向量占用CEILING(N/8)字节。（例如，如果有9到16列可以为NULL，则位向量使用两个字节。）为NULL的列不占用此向量中的位以外的空间。标题的可变长度部分还包含可变长度列的长度。每个长度需要一个或两个字节，具体取决于列的最大长度。如果索引中的所有列都不是NULL并且具有固定长度，则记录头没有可变长度部分。
+3. 对于每个非 NULL 可变长度字段，记录头包含一或两个字节的列长度。仅当部分列外部存储在溢出页中或最大长度超过 255 字节且实际长度超过 127 字节时才需要两个字节。对于外部存储的列，2字节长度表示内部存储部分的长度加上指向外部存储部分的 20 字节指针。内部部分是768字节，所以长度是768+20。 20字节的指针存储列的真实长度。
+4. 记录头后面是非 NULL 列的数据内容。
+5. 聚集索引中的记录包含所有用户定义列的字段。此外，还有一个 6 字节的事务 ID 字段和一个 7 字节的滚动指针字段。
+6. 如果没有为表定义主键，则每个聚集索引记录还包含一个 6 字节的行 ID 字段。
+7. 每个二级索引记录包含为聚集索引键定义的所有不在二级索引中的主键列。如果任何主键列是可变长度的，则每个二级索引的记录头都有一个可变长度部分来记录它们的长度，即使二级索引是在固定长度的列上定义的。
+8. 在内部，对于非可变长度字符集，诸如 CHAR(10) 之类的固定长度字符列以固定长度格式存储。不会从VARCHAR列中截断尾随空格。
+在内部，对于 utf8mb3 和 utf8mb4 等可变长度字符集，InnoDB 尝试通过修剪尾随空格将 CHAR(N) 存储在 N 个字节中。如果 CHAR(N) 列值的字节长度超过 N 个字节，则将尾随空格修剪为列值字节长度的最小值。 CHAR(N) 列的最大长度为最大字符字节长度 × N。
+至少为 CHAR(N) 保留了 N 个字节。在许多情况下，保留最小空间 N 可以在不导致索引页碎片的情况下就地完成列更新。相比之下，CHAR(N) 列在使用 REDUNDANT 行格式时占用最大字符字节长度 × N。
+大于或等于 768 字节的固定长度列被编码为可变长度字段，可以在页外存储。例如，如果字符集的最大字节长度大于 3，则 CHAR(255) 列可以超过 768 个字节，就像使用 utf8mb4 一样。
+
+
+## DYNAMIC行格式：
+- 介绍：DYNAMIC 行格式提供与 COMPACT 行格式相同的存储特性，但为长可变长度列增加了增强的存储功能，并支持大索引键前缀，可以认为是compact的升级版本。
+Barracuda 文件格式支持 DYNAMIC 行格式（antelope不支持）。当使用 ROW_FORMAT=DYNAMIC 创建表时，InnoDB 可以完全离页存储长可变长度列值（对于 VARCHAR、VARBINARY 和 BLOB 和 TEXT 类型），聚集索引记录仅包含一个 20 字节的指向溢出页面。大于或等于 768 字节的固定长度字段被编码为可变长度字段。
+（可以看到和redundant相比对于可变长字段dynamic是使用20字节指向溢出页，redundant是768储存在行，对于固定长度字段dynamic，redundant都是768）
+列是否存储在页外取决于页面大小和行的总大小。当一行太长时，选择最长的列进行页外存储，直到聚集索引记录适合 B 树页面。小于或等于 40 字节的 TEXT 和 BLOB 列存储在行中。
+DYNAMIC 行格式在合适的情况下保持将整行存储在索引节点中的效率（与 COMPACT 和 REDUNDANT 格式一样），但 DYNAMIC 行格式避免了用大量数据字节填充 B 树节点的问题长列。 DYNAMIC 行格式基于这样的想法：如果长数据值的一部分存储在页外，通常将整个值存储在页外是最有效的。对于 DYNAMIC 格式，较短的列可能会保留在 B 树节点中，从而最大限度地减少给定行所需的溢出页数。
+DYNAMIC 行格式支持最多 3072 个字节的索引键前缀。此功能由 innodb_large_prefix 变量控制，默认情况下启用。有关更多信息，请参阅 innodb_large_prefix 变量描述。
+使用 DYNAMIC 行格式的表可以存储在系统表空间、每个表文件表空间和通用表空间中。要将 DYNAMIC 表存储在系统表空间中，请禁用 innodb_file_per_table 并使用常规的 CREATE TABLE 或 ALTER TABLE 语句，或者将 TABLESPACE [=] innodb_system 表选项与 CREATE TABLE 或 ALTER TABLE 一起使用。 innodb_file_per_table 和 innodb_file_format 变量不适用于一般表空间，
+也不适用于使用 TABLESPACE [=] innodb_system 表选项将 DYNAMIC 表存储在系统表空间中。
+
+- 储存特性：和compact一样，是compact的变体
+
+## COMPRESSED行格式
+- 介绍：
+COMPRESSED 行格式提供与 DYNAMIC 行格式相同的存储特性和功能，但增加了对表和索引数据压缩的支持。
+Barracuda 文件格式支持 COMPRESSED 行格式。
+COMPRESSED 行格式使用与 DYNAMIC 行格式类似的页外存储内部详细信息，但表和索引数据的额外存储和性能考虑因素正在压缩并使用较小的页面大小。对于 COMPRESSED 行格式，KEY_BLOCK_SIZE 选项控制在聚集索引中存储多少列数据，以及在溢出页上放置多少列数据。
+COMPRESSED 行格式支持最多 3072 个字节的索引键前缀。此功能由 innodb_large_prefix 变量控制，默认情况下启用。有关更多信息，请参阅 innodb_large_prefix 变量描述。
+使用 COMPRESSED 行格式的表可以在 file-per-table 表空间或通用表空间中创建。系统表空间不支持 COMPRESSED 行格式。要将 COMPRESSED 表存储在 file-per-table 表空间中，必须启用 innodb_file_per_table 变量并且必须将 innodb_file_format 设置为 Barracuda。 innodb_file_per_table 和 innodb_file_format 变量不适用于一般表空间。通用表空间支持所有行格式，但需要注意的是，由于物理页大小不同，压缩表和未压缩表不能共存于同一个通用表空间中。
+- 储存特性：和compact一样，是compact的变体
+ps：COMPRESSED和compact不一样的地方主要在于存在其中的行数据会以zlib的格式压缩而节省空间。
+
+# 参考资料：
+1. [MySQL InnoDB 行记录格式（ROW_FORMAT）](https://www.cnblogs.com/wilburxu/p/9435818.html)
+2. [官网mysql5.7的文件格式](https://dev.mysql.com/doc/refman/5.7/en/innodb-file-format.html)
+3. [官网mysql5.7的行格式](https://dev.mysql.com/doc/refman/5.7/en/innodb-row-format.html#innodb-row-format-redundant)
+4. [MySQL技术内幕](https://book.douban.com/subject/24708143/)

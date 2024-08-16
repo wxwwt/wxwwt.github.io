@@ -3,8 +3,8 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: wxwwt's site
-subtitle: wxwwt's site
+title: 我想问问天的网站
+# subtitle: 我想问问天
 description: 我想问问天的个人网站，用来记录我的技术文章，生活记录，读书笔记等，希望能给各位读者带来一点帮助或者快乐~
 keywords:
 author: 我想问问天
@@ -13,7 +13,7 @@ timezone: ''
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
-url: http://example.com
+url: https://www.wxwwt.site
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
@@ -110,16 +110,21 @@ nav:
   display_title: true
   fixed: false # fixed navigation bar
 
+# 头像
+avatar:
+  img: /images/avatar.jpg
+  effect: false # 头像会一直转圈
+
 # 菜单配置
 menu:
   首页: / || fas fa-home
   时间轴: /archives/ || fas fa-archive
   标签: /tags/ || fas fa-tags
-  分类: /categories/ || fas fa-folder-open
-  清单||fa fa-heartbeat:
-    音乐: /music/ || fas fa-music
-    照片: /Gallery/ || fas fa-images
-    电影: /movies/ || fas fa-video
+  #  分类: /categories/ || fas fa-folder-open
+  # 清单||fa fa-heartbeat:
+  #  音乐: /music/ || fas fa-music
+  #  照片: /Gallery/ || fas fa-images
+  #  电影: /movies/ || fas fa-video
   友链: /link/ || fas fa-link
   关于: /about/ || fas fa-heart
 
@@ -127,15 +132,24 @@ menu:
 highlight_theme: mac
 
 # 顶部图
-top_img: https://jsd.012700.xyz/gh/jerryc127/butterfly_cdn@2.1.0/top_img/index.jpg
+index_img: /images/starNight.jpeg
 
 # 文章版权
 post_copyright:
   enable: true
   decode: false
-  author_href:
+  author_href: https://www.wxwwt.site
   license: CC BY-NC-SA 4.0
   license_url: https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+
+# 复制配置
+copy:
+  enable: true
+  copyright:
+    enable: true
+    limit_count: 50
+
 
 # 相关文章
 related_post:
@@ -161,7 +175,7 @@ aside:
       enable: true
       icon: fab fa-github
       text: Follow Me
-      link: https://github.com/xxxxxx
+      link: https://github.com/wxwwt
   card_announcement:
     enable: true
     content: This is my Blog
@@ -225,3 +239,102 @@ readmode: true
 
 # 统计分析
 google_analytics: G-K8M4PR0JSN
+
+# # 评论
+# comments:
+#   # Up to two comments system, the first will be shown as default
+#   # Choose: Disqus/Disqusjs/Livere/Gitalk/Valine/Waline/Utterances/Facebook Comments/Twikoo
+#   use: Valine,Disqus
+#   text: true # Display the comment name next to the button
+#   # lazyload: The comment system will be load when comment element enters the browser's viewport.
+#   # If you set it to true, the comment count will be invalid
+#   lazyload: true
+#   count: true # Display comment count in top_img
+#   card_post_count: false # Display comment count in Home Page
+
+
+# # 最新评论
+# newest_comments:
+#   enable: true
+#   sort_order: # Don't modify the setting unless you know how it works
+#   limit: 6
+#   storage: 10 # unit: mins, save data to localStorage
+#   avatar: true
+
+
+
+# 本地搜索
+# local_search:
+#   enable: true
+#   # Preload the search data when the page loads.
+#   preload: false
+#   # Show top n results per article, show all results by setting to -1
+#   top_n_per_article: 1
+#   # Unescape html strings to the readable one.
+#   unescape: false
+#   # CDN:
+
+# 分享
+sharejs:
+  enable: true
+  sites: facebook,twitter,wechat,weibo,qq
+
+# 在线聊天
+chat_btn: true
+
+
+# 广告
+google_adsense:
+  enable: true
+  auto_ads: true
+  js: https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js
+  client: ca-pub-9356781636799135  # 填入个人识别码
+  enable_page_level_ads: true
+
+# 点击特效,烟火
+fireworks:
+  enable: true
+  zIndex: 9999 # -1 or 9999
+  mobile: false
+
+
+# 美化
+beautify:
+  enable: true
+  field: site
+  title-prefix-icon: '\f0c1'
+  title-prefix-icon-color: "#F47466"
+
+
+
+# 主页subtitle
+subtitle:
+  enable: true
+  # Typewriter Effect (打字效果)
+  effect: true
+  startDelay: 300 # time before typing starts in milliseconds
+  typeSpeed: 150 # type speed in milliseconds
+  backSpeed: 50 # backspacing speed in milliseconds
+  # loop (循环打字)
+  loop: true
+  # source 调用第三方服务
+  # source: false 关闭调用
+  # source: 1  调用一言网的一句话（简体） https://hitokoto.cn/
+  # source: 2  调用一句网（简体） http://yijuzhan.com/
+  # source: 3  调用今日诗词（简体） https://www.jinrishici.com/
+  # subtitle 会先显示 source , 再显示 sub 的内容
+  source: 1
+  # 如果关闭打字效果，subtitle 只会显示 sub 的第一行文字
+  sub:
+    - 今日事&#44;今日毕
+    - Never put off till tomorrow what you can do today
+
+error_404:
+  enable: true
+  subtitle: "页面没有找到"
+  background: 
+
+
+
+
+

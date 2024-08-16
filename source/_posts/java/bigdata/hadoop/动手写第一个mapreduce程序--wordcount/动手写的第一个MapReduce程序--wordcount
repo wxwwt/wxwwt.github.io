@@ -1,0 +1,260 @@
+
+### 引语:
+&nbsp;&nbsp;&nbsp;&nbsp;之前运行过了hadoop官方自带的第一个例子wordcount,这次我们自己手写一个,这个相当于是编程语言中的helloworld一样.
+首先我们了解一下我们要写的MapReduce是处理的哪个部分,我们知道hadoop处理文件是先将要处理的文件拆分成很多个部分,分别处理完成,最后再将结果给汇聚起来,
+形成最终的处理结果.(也就是分治法的思想)我们接下来举个单词统计的例子,看看我们写的代码是整个MapReduce过程中的哪些部分.
+
+### 具体MapReduce的过程例子
+首先咱们有这么一个文件,文件内容如下:
+hello world hello java
+hello hadoop
+很简单的一个文件就两行.那么hadoop是怎么做单词统计的呢?我们用步骤来描述下:
+第一步:读取这个文件,按行来将这个文件每一行的单词给拆分出来,然后形成很多key/value的结果,处理完就是这样
+<hello,1>
+<world,1>
+<hello,1>
+<java,1>
+<hello,1>
+<hadoop,1>
+第二步:排序
+排序完会变成这样的结果
+<hadoop,1>
+<hello,1>
+<hello,1>
+<hello,1>
+<java,1>
+<world,1>
+第三步:合并
+合并后的结果如下
+<hadoop,1>
+<hello,1,1,1>
+<java,1>
+<world,1>
+第四步:汇聚结果
+<hadoop,1>
+<hello,3>
+<java,1>
+<world,1>
+
+到第四步完成,单词统计其实也就完成了.看完这个具体的实例,想必大家对mapreduce的处理过程有了一个比较清晰的理解.
+然后我们要知道第二步和第三步是hadoop框架帮助我们完成的,我们实际上需要写代码的地方是第一步和第四步.
+第一步对应的就是Map的过程,第四步对应的是Reduce的过程.
+
+### 编写mapreduce代码
+现在我们要做的就是完成第一步和第四步的代码
+1.创建项目
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E5%8A%A8%E6%89%8B%E5%86%99%E7%AC%AC%E4%B8%80%E4%B8%AAmapreduce%E7%A8%8B%E5%BA%8F--wordcount/%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE.png)
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E5%8A%A8%E6%89%8B%E5%86%99%E7%AC%AC%E4%B8%80%E4%B8%AAmapreduce%E7%A8%8B%E5%BA%8F--wordcount/%E5%88%9B%E5%BB%BAjava%E9%A1%B9%E7%9B%AE.png)
+创建一个普通的java项目就行,然后一路next点过去,项目名自己取一个.
+2.引入到时用到的hadoop的包,我这里用的是hadoop-3.2.0的版本,需要引入哪些包呢?
+要引入的包:
+(1).hadoop目录下share/hadoop/common下的包(除了那个test的包,官方的测试例子,可以不需要引入)
+(2).和上一条一样的common下lib中的包
+(3).hadoop目录下share/hadoop/mapreduce下的包
+(4).和上一条一样mapreduce下的lib中的包
+然后在idea中引入这些包,点击File->Project Structure->Modules
+点击右边的小加号来引入刚才说的那些jar包
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E5%8A%A8%E6%89%8B%E5%86%99%E7%AC%AC%E4%B8%80%E4%B8%AAmapreduce%E7%A8%8B%E5%BA%8F--wordcount/%E5%BC%95%E5%85%A5jar%E5%8C%85.png)
+
+3.引入包完成以后,我们创建一个叫WordCount的java文件,然后开始敲代码
+这里直接贴一下代码,__要注意import的部分,是不是和我一样?__因为好些个名字一样的类,来自于不同的jar,容易弄错.
+```java
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+import java.io.IOException;
+import java.util.StringTokenizer;
+
+/**
+ * @author wxwwt
+ * @since 2019-09-15
+ */
+public class WordCount {
+
+    /**
+     * Object      : 输入文件的内容
+     * Text        : 输入的每一行的数据
+     * Text        : 输出的key的类型
+     * IntWritable : 输出value的类型
+     */
+    private static class WordCountMapper extends Mapper<Object, Text, Text, IntWritable> {
+        @Override
+        protected void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+            StringTokenizer itr = new StringTokenizer(value.toString());
+            while (itr.hasMoreTokens()) {
+                context.write(new Text(itr.nextToken()), new IntWritable(1));
+            }
+        }
+    }
+
+    /**
+     * Text         :  Mapper输入的key
+     * IntWritable  :  Mapper输入的value
+     * Text         :  Reducer输出的key
+     * IntWritable  :  Reducer输出的value
+     */
+    private static class WordCountReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+        @Override
+        protected void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+            int count = 0;
+            for (IntWritable item : values) {
+                count += item.get();
+            }
+            context.write(key, new IntWritable(count));
+        }
+    }
+
+    public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
+        // 创建配置
+        Configuration configuration = new Configuration();
+        // 设置hadoop的作业  jobName是WordCount
+        Job job = Job.getInstance(configuration, "WordCount");
+        // 设置jar
+        job.setJarByClass(WordCount.class);
+        // 设置Mapper的class
+        job.setMapperClass(WordCountMapper.class);
+        // 设置Reducer的class
+        job.setReducerClass(WordCountReducer.class);
+        // 设置输出的key和value类型
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(IntWritable.class);
+
+        // 设置输入输出路径
+        FileInputFormat.addInputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        // 待job执行完  程序退出
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
+    }
+
+}
+```
+Mapper程序:
+```java
+/**
+ * Object      : 输入文件的内容
+ * Text        : 输入的每一行的数据
+ * Text        : 输出的key的类型
+ * IntWritable : 输出value的类型
+ */
+private static class WordCountMapper extends Mapper<Object, Text, Text, IntWritable> {
+    @Override
+    protected void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+        StringTokenizer itr = new StringTokenizer(value.toString());
+        while (itr.hasMoreTokens()) {
+            context.write(new Text(itr.nextToken()), new IntWritable(1));
+        }
+    }
+}
+```
+context是全局的上下文,先使用了StringTokenizer将value(也就是每行的数据)按照空格分成了很多份,StringTokenizer如果没有传入指定的分割符的话,默认会将
+	" \t\n\r\f" 空格制表符换行符等符号作为分隔符,然后使用nextToken()来遍历这个按照空格分割的字符串.context.write(new Text(itr.nextToken()), new IntWritable(1));
+  的意思就是将key/value写入到上下文中.
+  __注:在hadoop编程中String是Text,Integer是IntWritable.这是hadoop自己封装的类.记住就好了,使用起来和原来的类差不多__
+  这里就是写入了key为Text的单词,和value为Writable的1(统计数量).
+
+  Reduce程序:
+  ```java
+  /**
+   * Text         :  Mapper输入的key
+   * IntWritable  :  Mapper输入的value
+   * Text         :  Reducer输出的key
+   * IntWritable  :  Reducer输出的value
+   */
+  private static class WordCountReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+      @Override
+      protected void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+          int count = 0;
+          for (IntWritable item : values) {
+              count += item.get();
+          }
+          context.write(key, new IntWritable(count));
+      }
+  }
+  ```
+  reduce完成的是第四步的内容,我们看看上面的实例过程就回知道此时的输入参数大概是这样
+  <hello,1,1,1>
+  所以这里会有一个遍历values的过程,就是将这三个1给累加起来了.
+
+  程序入口:
+  ```java
+  public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
+      // 创建配置
+      Configuration configuration = new Configuration();
+      // 设置hadoop的作业  jobName是WordCount
+      Job job = Job.getInstance(configuration, "WordCount");
+      // 设置jar
+      job.setJarByClass(WordCount.class);
+      // 设置Mapper的class
+      job.setMapperClass(WordCountMapper.class);
+      // 设置Reducer的class
+      job.setReducerClass(WordCountReducer.class);
+      // 设置输出的key和value类型
+      job.setOutputKeyClass(Text.class);
+      job.setOutputValueClass(IntWritable.class);
+
+      // 设置输入输出路径
+      FileInputFormat.addInputPath(job, new Path(args[0]));
+      FileOutputFormat.setOutputPath(job, new Path(args[1]));
+      // 待job执行完  程序退出
+      System.exit(job.waitForCompletion(true) ? 0 : 1);
+  }
+  ```
+  程序入口这里其实看注释就已经比较清楚了,都是设置一些mapreduce需要的参数和路径之类的,
+  照着写就行了.这里稍微要注意一点的就是
+  ```java
+  FileInputFormat.addInputPath(job, new Path(args[0]));
+  FileOutputFormat.setOutputPath(job, new Path(args[1]));
+  ```
+  我们回顾一下之前运行hadoop的第一个程序的时候,命令大概是
+  hadoop jar WordCount.jar /input/wordcount/file1  /output/wcoutput
+  后面的两个参数就是文件的输入路径和输出路径,如果咱们代码修改了参数的位置或者有其他参数的操作.
+  就要对应好args下标的位置.
+
+  4.指定jar包运行的入口
+  代码完成后咱们就可以打包了
+  先选择File -> Project Structure -> Artifacts -> + -> JAR -> From modules with dependencies
+  ![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E5%8A%A8%E6%89%8B%E5%86%99%E7%AC%AC%E4%B8%80%E4%B8%AAmapreduce%E7%A8%8B%E5%BA%8F--wordcount/%E6%89%93%E5%8C%851.jpg)
+  然后选择刚才WordCount的main
+  ![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E5%8A%A8%E6%89%8B%E5%86%99%E7%AC%AC%E4%B8%80%E4%B8%AAmapreduce%E7%A8%8B%E5%BA%8F--wordcount/%E6%89%93%E5%8C%852.jpg)
+  再点击Build -> Build Artifacts
+  ![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E5%8A%A8%E6%89%8B%E5%86%99%E7%AC%AC%E4%B8%80%E4%B8%AAmapreduce%E7%A8%8B%E5%BA%8F--wordcount/%E6%89%93%E5%8C%853.jpg)
+  然后会弹出一个框 选择Build
+  ![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E5%8A%A8%E6%89%8B%E5%86%99%E7%AC%AC%E4%B8%80%E4%B8%AAmapreduce%E7%A8%8B%E5%BA%8F--wordcount/%E6%89%93%E5%8C%854.jpg)
+  之后会在项目中生成一个out的目录,在里面找到我们需要的WordCount.jar,上传到hadoop所在的服务器.
+  到这里基本上就结束了,因为后面运行的步骤和我之前的文章时一样的,可以参考:[hadoop运行第一个实例wordcount](https://juejin.im/post/5d595ec86fb9a06acb3e9fce)
+
+  ### 注意事项:
+  有可能直接运行
+  ```
+    hadoop jar WordCount.jar /input/wordcount/file1  /output/wcoutput
+  ```
+  会失败,报一个异常:
+  ```java
+  Exception in thread "main" java.io.IOException: Mkdirs failed to create /XXX/XXX
+    at org.apache.hadoop.util.RunJar.ensureDirectory(RunJar.java:106)
+    at org.apache.hadoop.util.RunJar.main(RunJar.java:150)
+  ```
+  类似上面这样的.
+
+  这时候需要删除掉jar包里面的License文件夹和里面的东西,可以参考这个链接:[stackoverflow](https://stackoverflow.com/questions/10522835/hadoop-java-io-ioexception-mkdirs-failed-to-create-some-path
+)
+查看下jar中license的文件和文件夹
+jar tvf XXX.jar | grep -i license
+然后删除掉 META-INF/LICENSE里面的内容
+zip -d XXX.jar META-INF/LICENSE
+
+### 总结:
+1.了解了mapReduce的运行步骤,这样知道了我们只需要写map和reduce的过程,中间步骤hadoop框架已经做了处理,以后其他的程序也可以参考这个步骤来写
+2.hadoop中String是Text,Integer是IntWritable这个要记住,用错了会报异常的
+3.报 Mkdirs failed to create /XXX/XXX异常的时候先检查是不是路径有问题,没有的话就删除掉jar包中的META-INF/LICENSE
+
+### 参考资料:
+1.https://hadoop.apache.org/docs/stable/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html
+2.https://stackoverflow.com/questions/10522835/hadoop-java-io-ioexception-mkdirs-failed-to-create-some-path

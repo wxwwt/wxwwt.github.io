@@ -1,0 +1,58 @@
+### 爬虫:对网站加密请求的分析
+
+### 引语:
+最近因为有一些需求,需要对某些网站的数据进行抓取然后分析用户的行为之类的.所以对遇到的一些问题进行一个记录,第一次处理这种加密的请求,
+也花费了自己不少时间,做一个处理过程的记录.给有类似需求的朋友也增加一个可参考的资料.
+
+### 分析步骤:
+1.首先是要看请求的url大致样子是
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E7%88%AC%E8%99%AB_%E5%8A%A0%E5%AF%86%E8%AF%B7%E6%B1%82%E5%88%86%E6%9E%90/url.png)
+这里是一个get请求,uri的组成是:网站域名+api地址+analysis参数.加密的部分其实就是这个analysis,这个网站有get和post的请求,但是都会在参数里面加一个analysis参数,用来区分是
+内部调用还是其他人的请求.所以咱们只要破解了这个参数的生成规则,就可以拿到这个网站的数据了.
+2.因此我们找找看能不能从网站的js文件或者哪里找出这个拼接参数加密的规则,就从第一个的请求参数开始,我们处于开发者模式下,点击Network,然后选择第一个接口,点击Initiator.
+会跳转到对应的js中.这时候发现js是压缩的,点击chrome开发者工具自带的格式化代码
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E7%88%AC%E8%99%AB_%E5%8A%A0%E5%AF%86%E8%AF%B7%E6%B1%82%E5%88%86%E6%9E%90/%E7%82%B9%E5%87%BB%E6%89%A9%E5%B1%95.png)
+格式代码后,我们就方便查看加密规则是从哪里来的了.
+3.这时候我们可以在Network右边的侧边栏加入XHR breakPoint,
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E7%88%AC%E8%99%AB_%E5%8A%A0%E5%AF%86%E8%AF%B7%E6%B1%82%E5%88%86%E6%9E%90/XHRBreakPoint.png)
+将我们前面的url中的关键字添加进来,然后刷新页面,当再次请求到这个url的时候,就回进入到这个断点中
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E7%88%AC%E8%99%AB_%E5%8A%A0%E5%AF%86%E8%AF%B7%E6%B1%82%E5%88%86%E6%9E%90/callstack.png)
+左边就是代码中各种参数的变量,值等,右边就是调用栈,我们可以一步步从中去找寻参数是从哪里加密的.
+4.这个网站的js里面的函数对于我一个后端来说讲道理,有些难读懂,我是从参考了网上一些大神的资料,然后从最初的一个调用栈一个个网上查看传递的参数是什么,来查看到底是哪一步进行的加密.
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E7%88%AC%E8%99%AB_%E5%8A%A0%E5%AF%86%E8%AF%B7%E6%B1%82%E5%88%86%E6%9E%90/%E5%AF%B9%E6%AF%94%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0.png)
+这个过程很花时间,js文件中有很多很多匿名函数,调试的时候没法一步步全部看完,主要是要找传参的问题,对比发现图中两个调用栈中的参数中有一个没有analysis参数,说明加密是在另一个调用栈中完成的.于是乎定位到了是在get这个调用中加密的,
+知道了在哪个文件中加密的就好办了.
+5.我们在刚才的get调用这个里面打上断点一步步调试看看参数值
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E7%88%AC%E8%99%AB_%E5%8A%A0%E5%AF%86%E8%AF%B7%E6%B1%82%E5%88%86%E6%9E%90/%E5%8A%A0%E5%AF%86%E9%83%A8%E5%88%86.png)
+这里其实可读性也挺差的,我们可以将鼠标选中自己要查看的参数一步步推出来大致的加密过程
+这里也是要花不少时间,推算出来
+
+### 结果:
+最后翻译为java代码大概是这样
+```
+private static String generatorAnalysis() {
+       final String FLAG = "@#";
+       // @#/rank/indexPlus/brand_id/1@#52217050198@#1
+       // 时间戳的差值
+       Long time = System.currentTimeMillis() - 1515125653845L;
+       // 请求的api
+       String baseUrl = "/rank/indexPlus/brand_id/1";
+       StringBuilder builder = new StringBuilder(FLAG);
+       // 拼接字符串的规则 api + @# + 时间戳差值 + @#1
+       builder.append(baseUrl).append(FLAG).append(time).append(FLAG).append(1);
+       // 自定义的加密 这里加密函数不就给出了  可以自己根据断点里面的值推算出来哦
+       String encodeStr = diyEncode(builder.toString());
+       // 最后base64编码下
+       return new String(Base64.getEncoder().encode(encodeStr.getBytes()));
+   }
+```
+1.先根据当前13位的时间戳和固定的一个时间戳生成一个差值
+2.第二个参数是请求的api
+3.再根据js中的拼接规则给拼接出来一个具体的字符串 其中有一个@#是拼接的分隔符
+4.在对这个字符串进行加密操作
+5.最后对这个字符串进行base64编码就完成了
+
+### 总结:
+以后遇到遇到加密参数先不要慌,如果是网站不是app的加密参数,还是有很大的概率可以弄出来的.分析好url的结构,然后根据引用到的js文件反推加密的过程,这个过程可能会用到fidder或者Charles这样的工具,
+替换掉网站的js(用来窥探一些参数的值,文中没有给出,打算下次再写一篇专门介绍下).最后在将加密规则翻译为代码就可以了.主要花时间的点就在于从js文件中寻找加密的代码和翻译加密代码的过程,要细心有可能加密的部分就是一行,但是却是最关键的点.
+再次做个记录,也帮助其他朋友破解类似网站来抓取数据,但是不要用来作违反的事情.

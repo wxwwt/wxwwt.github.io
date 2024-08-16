@@ -3,8 +3,8 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: wxwwt's site
-subtitle: wxwwt's site
+title:  我想问问天的博客
+# subtitle: 我想问问天
 description: 我想问问天的个人网站，用来记录我的技术文章，生活记录，读书笔记等，希望能给各位读者带来一点帮助或者快乐~
 keywords:
 author: 我想问问天
@@ -106,7 +106,7 @@ deploy:
 
 # 导航配置
 nav:
-  logo: https://jsd.012700.xyz/gh/jerryc127/butterfly_cdn@2.1.0/top_img/index.jpg
+  logo: #img
   display_title: true
   fixed: false # fixed navigation bar
 
@@ -115,12 +115,12 @@ menu:
   首页: / || fas fa-home
   时间轴: /archives/ || fas fa-archive
   标签: /tags/ || fas fa-tags
-  分类: /categories/ || fas fa-folder-open
-  清单||fa fa-heartbeat:
-    音乐: /music/ || fas fa-music
-    照片: /Gallery/ || fas fa-images
-    电影: /movies/ || fas fa-video
-  友链: /link/ || fas fa-link
-  关于: /about/ || fas fa-heart
+  # 分类: /categories/ || fas fa-folder-open
+  # 清单||fa fa-heartbeat:
+  #  音乐: /music/ || fas fa-music
+  #  照片: /Gallery/ || fas fa-images
+  #  电影: /movies/ || fas fa-video
+  #友链: /link/ || fas fa-link
+  # 关于: /about/ || fas fa-heart
 
 

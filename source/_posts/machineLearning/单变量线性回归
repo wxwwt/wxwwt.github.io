@@ -1,0 +1,67 @@
+# 1.模型描述：
+##  1.1监督学习 Supervised Learning：
+  given the right answer for each example in the data.
+  对于每个数据集中的样例都有一个人为给出的正确答案。
+
+
+##  1.2回归问题 Regression problem：
+  predict real-valued output.
+  预测实际值的输出。
+  ps：回归问题这个从字面意思上我老是会记错它是干嘛的，可以这样联想记忆，函数是一个线性模型，就是一条线，我们要让新的值，回归到这条线上面。就是预测一个新的值是
+  否在这个模型上，就是预测值是否会回归到这条线上，这样可能就记住了回归是预测实际值的输出。
+
+##  1.3分类问题 Classification problem：
+  predict discrete-valued output.
+  预测离散值的输出。
+
+##  1.4训练过程：
+  ![](https://img-blog.csdnimg.cn/img_convert/662a8234d24804eaf36c1b07b1401055.png)
+  根据训练集学习出一个学习算法，也就是一个函数，然后通过输入新数据来预测新的值。
+  只有一个变量的线性回归叫做单变量线性回归。
+
+# 2.代价函数：
+We can measure the accuracy of our hypothesis function by using a
+cost function . This takes
+an average difference (actually a fancier version of an average) of all the results of the
+hypothesis with inputs from x's and the actual output y's.
+我们可以使用代价函数来衡量假设函数的准确性。这将假设的所有结果与x的输入和实际输出y的平均值进行平均差（实际上是平均值的简化形式）。
+![](https://img-blog.csdnimg.cn/img_convert/427e46123bc4158cce680928835e8d17.png)
+ps：1.对于单变量的线性回归来说，h(x)= Θ0 + Θ1*x，两个变量可以根据训练集的数据得出很多组值，但是只有一组值是最好的。所以要怎么衡量哪一组Θ是最好的，就需要使用代价函数，
+代价函数的公式和方差标准差有点像。使用x1计算出来的h(x1)和训练集的y1的差值的平方，这里是计算当前h(x)和实际的差距，然后在除以2m（m是样本的数据），将数据平均化。
+2.代价函数因为是平方的1/2m，所以永远是一个正数
+![](https://img-blog.csdnimg.cn/img_convert/1b0f11ccaf1daf867ced8803fc491957.png)
+如果将代价函数的所有可能的取值画出来，单变量线性回归的情况下会是一个碗的形状，那么碗的底部的中心就是全局的最优解，就是最小的那个代价函数。
+
+# 3.梯度下降：
+先看下梯度下降的定义：
+![](https://img-blog.csdnimg.cn/img_convert/7da6b5b0c164fe9c9f5718eb900542d3.png)
+梯度下降是一种算法， 用来找到代价函数的最小值。
+1.任意从一点的Θ0，Θ1开始
+2.让$（Θ0，Θ1）$慢慢减小，直到找到最小值的代价函数。
+ps：
+![](https://img-blog.csdnimg.cn/img_convert/3cd1e56fb80e7ba41e0969f01864d638.png)
+1.形象的例子就是想象代价函数就是一座山，站在山的某一点去往山下，做法就是先往山上看一圈，往山下的方向走一小步，走完一步，再下一步用相同的方式再走下一步。
+2.从代价函数的值始终是正数我们知道,然后α是小于等于1,
+![](https://img-blog.csdnimg.cn/img_convert/14b44eab8325743c8cedda66f7662cd2.png)
+是学习率α乘以J(θ0,θ1)对θ1的偏导数，当斜率是正数的时候，θ0或者θ1就会往左边下降，当斜率是负数的时候，θ0或者θ1就会往右边下降。这样就保证了不管斜率是正向还是负向都是
+往局部最低点去靠近。
+![](https://img-blog.csdnimg.cn/img_convert/505420a741524ca928084ffe6dba63f3.png)
+3.对于θ0,θ1是要同时更新的，可以看图片中正确和错误的做法。如果是后者其实是拿了已经变更的θ0在去更新θ1，这个时候值就不是同步更新的，最后得到的就可能不是最小值。
+4.从不同的初始值，就是任意一点的(θ0,θ1)开始，可能会去往不同的局部最小值。
+![](https://img-blog.csdnimg.cn/img_convert/bf768727a8d471595d1014905167e466.png)
+5.如果步长太小，会导致梯度下降比较慢，要计算很多次才能找到最小值（但是这个影响其实比较小）。如果步长较大，可能会出现收敛失败或者甚至是发散的结果。
+
+6.如果初始点就是在局部的最优解上面，所以偏导数会是0，所以按照公式计算θ1 = θ1 - 0。值就是原来的值所以不会继续往下下降。
+
+
+# 4.线性回归的梯度下降:
+将上文学习到的代价函数和梯度下降进行公式合并，就可以推导出来一个新的公式。
+![](https://img-blog.csdnimg.cn/img_convert/a387a2f33152c7db412754fe9230357c.png)
+
+所以线性回归的梯度下降公式就是：
+![](https://img-blog.csdnimg.cn/img_convert/e8e1d2c195c79f229aff3f517c19202a.png)
+
+# 5.总结：
+1.学习了监督学习，回归问题，分类问题的一些作用和定义；
+2.学习了代价函数和梯度下降算法，并将两者的公式组合在一起生成了一个新的线性回归的提低下降的算法公式；
+3.复习了以前学习的一些数学知识，偏导数，斜率的含义等，特别是在推导公式的时候。

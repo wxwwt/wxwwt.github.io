@@ -1,0 +1,69 @@
+
+前言：
+支持向量机这一节是看的中国mooc网上浙大胡浩基的课，感觉还是中文讲课的比较清晰易懂，
+再结合看了周志华的《机器学习》。看完视频再看瓜书才明白上面那些公式是怎么来的，可能对于初学者来说还是
+母语的视频教学更好懂。一开始看瓜书真的是头痛，全是各种数学公式，推导过程也没有。
+
+1.支持向量机（support vector machine）定义：可分不可分
+![线性可分](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B05-%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA/%E7%BA%BF%E6%80%A7%E5%8F%AF%E5%88%86.png)
+如图如果能用一条直线把不同的数据给分隔开，就是线性可分的（linear separable）
+![线性不可分](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B05-%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA/%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%8F%AF%E5%88%86.png)
+如果如果不能用一条直线把不同的数据给分隔开，就是线性不可分的（nonlinear separable）
+
+这个理论可以推广到三维，甚至思维以上的特征空间。三维使用平面来分隔数据，四维和四维以上因为人类
+无法直观的感知出来，所以画不出来，但是能分隔数据，存在这样的平面叫做超平面。
+
+二维线性可分情况：
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B05-%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA/%E4%BA%8C%E7%BB%B4%E6%83%85%E5%86%B5%E7%9A%84%E7%BA%BF%E6%80%A7%E5%8F%AF%E5%88%86.png)
+
+数学定义：
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B05-%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA/%E6%95%B0%E5%AD%A6%E5%AE%9A%E4%B9%89%E7%BA%BF%E6%80%A7%E5%8F%AF%E5%88%86.png)
+
+向量定义：
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B05-%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA/%E5%90%91%E9%87%8F%E5%BD%A2%E5%BC%8F.png)
+
+
+2.支持向量机（问题描述）
+对于线性可分的情况下，怎么找到最优分类的超平面
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B05-%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA/%E6%80%8E%E4%B9%88%E9%80%89%E6%8B%A9%E6%9C%80%E9%80%82%E5%90%88%E7%9A%84%E8%B6%85%E5%B9%B3%E9%9D%A2.png)
+
+支持向量机的寻找的最优分类直线应该满足：
+2.1 该直线分开了两类
+2.2 该直线最大化间隔（margin）
+2.3 该直线处于间隔的正中间，到所有支持向量距离相等
+
+上述的规则同样适用于线性可分的多维特征空间，只不过直线是变成了超平面。
+
+3.数学定义的线性可分问题推导：
+理解这个部分的公式花了我很长的时间，看了很多遍视频，对照着书和找的资料才勉强理解了。越往后面学，越发现自己数学知识储备太少。
+首先我们看一个点到平面的距离的公式：
+![点到平面的距离公式](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B05-%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA/%E7%82%B9%E5%88%B0%E5%B9%B3%E9%9D%A2%E7%9A%84%E8%B7%9D%E7%A6%BB%E5%85%AC%E5%BC%8F.png)
+可以发现其实这个公式可以看做是平行四边形的面积除以底边，然后求出的高就是点到平面的距离。
+
+然后开始推导求线性可分问题的公式：
+先看两个存在的公式：
+事实1：
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B05-%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA/%E4%BA%8B%E5%AE%9E1.png)
+
+
+事实2
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B05-%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA/%E4%BA%8B%E5%AE%9E2-2.png)
+
+在先看下样本空间任意一点到超平面的距离公式是：
+ωx + b
+这里的ω是个法向量，决定了超平面的方向，b是位移项是超平面和原点之间的距离。
+
+根据事实1和事实2来推导：
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B05-%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA/%E6%A0%B9%E6%8D%AE%E4%BA%8B%E5%AE%9E2.png)
+
+要找到最大的间隔的超平面，就是要找到参数ω和b，使d最大。
+所以问题就转化为，求||ω||的最小值。
+
+
+所以优化问题定为：
+最小化 1/2 * ||ω||^2 （这个和最小化||ω||是一样的，只是为了方便求导弄成了这种形式）
+
+这个公式是二次规划的问题，所以我们求（ω，b）的为问题变成了求二次规划的问题。
+![](http://wxwwt-oss.oss-cn-hangzhou.aliyuncs.com/article_picture/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B05-%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA/%E4%BA%8C%E6%AC%A1%E8%A7%84%E5%88%92%E9%97%AE%E9%A2%98.png)
+因为二次规划是要么是无解，要么就是有唯一最小值的。又因为在凸优化问题中，一定存在唯一最小值的解，
+所以是凸优化问题的二次规划问题一定有最优解。因此后面只要转化为了二次规划，又是凸优化问题的。我们就可以用已经存在解决凸优化问题的工具去解决它。
