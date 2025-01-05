@@ -103,6 +103,7 @@ theme: butterfly
 deploy:
   type: git
   repo: git@github.com:wxwwt/wxwwt.github.io.git
+  branch: main
 
 # 导航配置
 nav:
@@ -280,16 +281,17 @@ sharejs:
   sites: facebook,twitter,wechat,weibo,qq
 
 # 在线聊天
-chat_btn: true
+# chat_btn: true
 
 
 # 广告
-google_adsense:
-  enable: true
-  auto_ads: true
-  js: https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js
-  client: ca-pub-9356781636799135  # 填入个人识别码
-  enable_page_level_ads: true
+# google_adsense:
+#   enable: true
+#   auto_ads: true
+#   js: https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js
+#   client: ca-pub-9356781636799135
+#   enable_page_level_ads: true
+
 
 # 点击特效,烟火
 fireworks:
