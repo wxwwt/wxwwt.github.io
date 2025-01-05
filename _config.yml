@@ -103,7 +103,7 @@ theme: butterfly
 deploy:
   type: git
   repo: git@github.com:wxwwt/wxwwt.github.io.git
-  branch: main
+  branch:  html-branch
 
 # 导航配置
 nav:
